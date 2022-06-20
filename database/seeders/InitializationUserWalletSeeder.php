@@ -57,6 +57,7 @@ class InitializationUserWalletSeeder extends Seeder
             $WalletUserEntity = $WalletEntity->wallet_users()->updateOrCreate([
                 'name' => Arr::get($data, 'name'),
             ], [
+                'user_id'  => $UserEntity->id,
                 'name'     => Arr::get($data, 'name'),
                 'token'    => $token,
                 'is_admin' => 1,

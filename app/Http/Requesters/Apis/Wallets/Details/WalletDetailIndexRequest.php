@@ -15,8 +15,8 @@ class WalletDetailIndexRequest extends Request
     protected function schema(): array
     {
         return [
-            'wallets.id' => null,
-            'users.id'   => null,
+            'wallets.id'      => null,
+            'wallet_users.id' => null,
         ];
     }
 
@@ -30,8 +30,8 @@ class WalletDetailIndexRequest extends Request
     protected function map($row): array
     {
         return [
-            'wallets.id' => Arr::get($row, 'wallet'),
-            'users.id'   => Arr::get($row, 'user.id'),
+            'wallets.id'      => Arr::get($row, 'wallet'),
+            'wallet_users.id' => Arr::get($row, sprintf("wallet_user.%s.id",Arr::get($row, 'wallet'))),
         ];
     }
 }

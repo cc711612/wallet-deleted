@@ -37,11 +37,11 @@ class WalletDetailIndexValidator extends ValidatorAbstracts
     protected function rules(): array
     {
         return [
-            'wallets.id' => [
+            'wallets.id'      => [
                 'required',
                 'exists:wallets,id',
             ],
-            'users.id'   => [
+            'wallet_users.id' => [
                 'required',
                 Rule::exists('wallet_users', 'id')->where(function ($query) {
                     $query->where('wallet_id', Arr::get($this->request, 'wallets.id'));
@@ -58,10 +58,10 @@ class WalletDetailIndexValidator extends ValidatorAbstracts
     protected function messages(): array
     {
         return [
-            'wallets.id.required'        => '系統異常',
-            'wallets.id.exists'          => '系統異常',
-            'users.id.required'          => '系統異常',
-            'users.id.exists'            => '非帳本內成員',
+            'wallets.id.required'      => '系統異常',
+            'wallets.id.exists'        => '系統異常',
+            'wallet_users.id.required' => '系統異常',
+            'wallet_users.id.exists'   => '非帳本內成員',
         ];
     }
 }

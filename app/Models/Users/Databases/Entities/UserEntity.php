@@ -10,9 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Wallets\Databases\Entities\WalletEntity;
 use App\Models\Socials\Databases\Entities\SocialEntity;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 
-class UserEntity extends Model
+class UserEntity extends Authenticatable
 {
+    use HasApiTokens, HasFactory, Notifiable;
     use SoftDeletes;
 
     const Table = 'users';
@@ -72,5 +78,15 @@ class UserEntity extends Model
     public function socials()
     {
         return $this->belongsToMany(SocialEntity::class, 'user_social', 'user_id', 'social_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @Author: Roy
+     * @DateTime: 2022/6/21 上午 01:59
+     */
+    public function wallet_users()
+    {
+        return $this->hasMany(WalletUserEntity::class, 'user_id', 'id');
     }
 }

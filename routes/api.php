@@ -26,6 +26,9 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         });
         # 帳本
         Route::resource('wallet', WalletController::class)->only(['store', 'update', 'destroy']);
+    });
+    # 需要wallet_member_token的
+    Route::group(['middleware' => ['VerifyWalletMemberApi']], function () {
         Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
             Route::name("index")->post("/list", [WalletController::class, 'index']);
             # 帳本明細
