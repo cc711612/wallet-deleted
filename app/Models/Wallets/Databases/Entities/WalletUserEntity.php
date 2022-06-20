@@ -25,6 +25,7 @@ class WalletUserEntity extends Model
      */
     protected $fillable = [
         'wallet_id',
+        'user_id',
         'name',
         'token',
         'is_admin',

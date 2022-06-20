@@ -30,9 +30,8 @@ class LogoutController extends Controller
      */
     public function logout(Request $request)
     {
-
         # clean cache
-        $this->cleanToken(Arr::get($request, 'user.api_token'));
+        $this->cleanToken(Arr::get($request, 'user.token'));
 
         return response()->json([
             'status'  => true,

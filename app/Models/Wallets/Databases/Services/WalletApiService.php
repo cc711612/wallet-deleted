@@ -12,6 +12,7 @@ use App\Models\Wallets\Databases\Entities\WalletEntity;
 use App\Models\Users\Databases\Entities\UserEntity;
 use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
+use Illuminate\Support\Facades\DB;
 
 class WalletApiService extends Service
 {
@@ -88,5 +89,19 @@ class WalletApiService extends Service
                 WalletUserEntity::Table,
             ])
             ->find($this->getRequestByKey('wallets.id'));
+    }
+
+    /**
+     * @Author: Roy
+     * @DateTime: 2022/6/21 上午 02:21
+     */
+    public function createWalletWithUser()
+    {
+        return DB::transaction(function () {
+            $Entity = $this->getEntity()
+                ->create($this->getRequestByKey('wallets'));
+            $Entity->wallet_users()->create($this->getRequestByKey('wallet_users'));
+            return $Entity;
+        });
     }
 }

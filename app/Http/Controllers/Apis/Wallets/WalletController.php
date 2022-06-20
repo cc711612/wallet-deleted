@@ -16,13 +16,20 @@ use App\Http\Requesters\Apis\Wallets\WalletStoreRequest;
 use App\Http\Validators\Apis\Wallets\WalletStoreValidator;
 use App\Http\Requesters\Apis\Wallets\WalletUpdateRequest;
 use App\Http\Validators\Apis\Wallets\WalletUpdateValidator;
+use Illuminate\Support\Carbon;
 
 class WalletController extends Controller
 {
     use ApiPaginateTrait;
 
+    /**
+     * @var \App\Models\Wallets\Databases\Services\WalletApiService
+     */
     private $wallet_api_service;
 
+    /**
+     * @param  \App\Models\Wallets\Databases\Services\WalletApiService  $WalletApiService
+     */
     public function __construct(
         WalletApiService $WalletApiService
     ) {
@@ -30,14 +37,16 @@ class WalletController extends Controller
     }
 
     /**
-     * @param  \Illuminate\Http\Client\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      *
+     * @return \Illuminate\Http\JsonResponse
      * @Author: Roy
-     * @DateTime: 2022/6/20 下午 04:43
+     * @DateTime: 2022/6/21 上午 02:19
      */
     public function index(Request $request)
     {
         $requester = (new WalletIndexRequest($request));
+
         $Wallets = $this->wallet_api_service
             ->setRequest($requester->toArray())
             ->paginate();
@@ -71,12 +80,12 @@ class WalletController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      * @Author: Roy
-     * @DateTime: 2022/6/20 下午 07:52
+     * @DateTime: 2022/6/21 上午 02:19
      */
     public function store(Request $request)
     {
         $requester = (new WalletStoreRequest($request));
-
+       
         $Validate = (new WalletStoreValidator($requester))->validate();
         if ($Validate->fails() === true) {
             return response()->json([
@@ -88,15 +97,30 @@ class WalletController extends Controller
         }
         #Create
         $Entity = $this->wallet_api_service
-            ->create(Arr::get($requester, 'wallets'));
+            ->setRequest($requester->toArray())
+            ->createWalletWithUser();
 
+        if (is_null($Entity) === false) {
+            return response()->json([
+                'status'  => true,
+                'code'    => 200,
+                'message' => [],
+                'data'    => [
+                    'wallet' => [
+                        'id'         => Arr::get($Entity, 'id'),
+                        'code'       => Arr::get($Entity, 'code'),
+                        'title'      => Arr::get($Entity, 'title'),
+                        'status'     => Arr::get($Entity, 'status'),
+                        'created_at' => Arr::get($Entity, 'created_at', Carbon::now())->toDateTimeString(),
+                    ],
+                ],
+            ]);
+        }
         return response()->json([
-            'status'  => true,
-            'code'    => 200,
-            'message' => [],
-            'data'    => [
-                'wallet' => $Entity->toArray(),
-            ],
+            'status'  => false,
+            'code'    => 400,
+            'message' => "系統發生錯誤",
+            'data'    => [],
         ]);
     }
 

@@ -61,7 +61,7 @@ class WalletUpdateValidator extends ValidatorAbstracts
     protected function messages(): array
     {
         return [
-            'wallets.id.exists'        => '系統異常',
+            'wallets.id.exists'        => '非創建者不得編輯',
             'wallets.id.required'      => '系統異常',
             'wallets.user_id.required' => '系統異常',
             'wallets.user_id.exists'   => '系統異常',

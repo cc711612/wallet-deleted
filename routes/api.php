@@ -24,13 +24,15 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
             Route::name("logout")->post("/logout", [LogoutController::class, 'logout']);
         });
+        Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
+            Route::name("index")->post("/list", [WalletController::class, 'index']);
+        });
         # 帳本
         Route::resource('wallet', WalletController::class)->only(['store', 'update', 'destroy']);
     });
     # 需要wallet_member_token的
     Route::group(['middleware' => ['VerifyWalletMemberApi']], function () {
         Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
-            Route::name("index")->post("/list", [WalletController::class, 'index']);
             # 帳本明細
             Route::group(['prefix' => '{wallet}'], function () {
                 Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
