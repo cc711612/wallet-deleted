@@ -66,6 +66,7 @@ class WalletDetailController extends Controller
         $Wallet = $this->wallet_api_service
             ->setRequest($requester->toArray())
             ->getWalletWithDetail();
+
         if (is_null($Wallet)) {
             return response()->json([
                 'status'  => false,

@@ -13,9 +13,12 @@ use App\Models\Users\Databases\Entities\UserEntity;
 use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 use Illuminate\Support\Facades\DB;
+use App\Traits\Wallets\Auth\WalletUserAuthCacheTrait;
 
 class WalletApiService extends Service
 {
+    use WalletUserAuthCacheTrait;
+
     protected function getEntity(): Model
     {
         // TODO: Implement getEntity() method.
@@ -97,10 +100,12 @@ class WalletApiService extends Service
      */
     public function createWalletWithUser()
     {
+
         return DB::transaction(function () {
             $Entity = $this->getEntity()
                 ->create($this->getRequestByKey('wallets'));
             $Entity->wallet_users()->create($this->getRequestByKey('wallet_users'));
+            $this->updateWalletUserCache($this->getRequestByKey('wallets.user_id'));
             return $Entity;
         });
     }

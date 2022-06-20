@@ -85,7 +85,7 @@ class WalletController extends Controller
     public function store(Request $request)
     {
         $requester = (new WalletStoreRequest($request));
-       
+
         $Validate = (new WalletStoreValidator($requester))->validate();
         if ($Validate->fails() === true) {
             return response()->json([
