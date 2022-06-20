@@ -37,13 +37,15 @@ class WalletUpdateValidator extends ValidatorAbstracts
     protected function rules(): array
     {
         return [
-            'wallets.id'      => [
-                'required',
-                'exists:wallets,id',
-            ],
             'wallets.user_id' => [
                 'required',
                 'exists:users,id',
+            ],
+            'wallets.id'      => [
+                'required',
+                Rule::exists('wallets', 'id')->where(function ($query) {
+                    $query->where('user_id', Arr::get($this->request, 'wallets.user_id'));
+                }),
             ],
             'wallets.title'   => [
                 'required',

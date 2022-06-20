@@ -58,8 +58,8 @@ class WalletDetailUserValidator extends ValidatorAbstracts
     {
         return [
             'wallets.id.required'   => '系統異常',
-            'wallets.id.exists'     => '系統異常',
-            'wallets.code.required' => '帳本驗證碼錯誤',
+            'wallets.id.exists'     => '帳本驗證碼錯誤',
+            'wallets.code.required' => '帳本驗證碼為必填',
         ];
     }
 }

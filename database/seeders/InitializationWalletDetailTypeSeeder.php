@@ -19,6 +19,10 @@ class InitializationWalletDetailTypeSeeder extends Seeder
             [
                 'id' => WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE,
                 'title' => '公費',
+            ],
+            [
+                'id' => WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE,
+                'title' => '一般花費',
             ]
         ];
 
