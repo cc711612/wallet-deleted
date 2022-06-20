@@ -82,7 +82,7 @@ class WalletController extends Controller
             return response()->json([
                 'status'  => false,
                 'code'    => 400,
-                'message' => $Validate->errors(),
+                'message' => $Validate->errors()->first(),
                 'data'    => [],
             ]);
         }
@@ -116,7 +116,7 @@ class WalletController extends Controller
             return response()->json([
                 'status'  => false,
                 'code'    => 400,
-                'message' => $Validate->errors(),
+                'message' => $Validate->errors()->first(),
                 'data'    => [],
             ]);
         }

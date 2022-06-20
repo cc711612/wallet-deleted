@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Apis\Auth\LogoutController;
 use App\Http\Controllers\Apis\Auth\LoginController;
 use App\Http\Controllers\Apis\Wallets\WalletController;
+use App\Http\Controllers\Apis\Wallets\WalletDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,15 +24,23 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
             Route::name("logout")->post("/logout", [LogoutController::class, 'logout']);
         });
+        # 帳本
         Route::resource('wallet', WalletController::class)->only(['store', 'update', 'destroy']);
-        Route::group(['as' => 'wallet.','prefix' => 'wallet'], function () {
+        Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
             Route::name("index")->post("/list", [WalletController::class, 'index']);
+            # 帳本明細
+            Route::group(['prefix' => '{wallet}'], function () {
+                Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
+                Route::name("detail.index")->post("/detail/list", [WalletDetailController::class, 'index']);
+            });
         });
     });
     # 登入相關
     Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
         Route::name("login")->post("/login", [LoginController::class, 'login']);
     });
+    # 帳本成員
+    Route::name("wallet.detail.user")->post("/wallet/{wallet}/detail/user", [WalletDetailController::class, 'user']);
 });
 Route::fallback(function () {
     return response([

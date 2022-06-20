@@ -10,4 +10,6 @@ interface WalletDetailTypes
 {
     # 公費
     const WALLET_DETAIL_TYPE_PUBLIC_EXPENSE = 1;
+    # 非公費
+    const WALLET_DETAIL_TYPE_GENERAL_EXPENSE = 2;
 }

@@ -10,6 +10,8 @@ use App\Concerns\Databases\Service;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Wallets\Databases\Entities\WalletEntity;
 use App\Models\Users\Databases\Entities\UserEntity;
+use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
+use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 
 class WalletApiService extends Service
 {
@@ -23,6 +25,11 @@ class WalletApiService extends Service
         return app(WalletEntity::class);
     }
 
+    /**
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @Author: Roy
+     * @DateTime: 2022/6/21 上午 12:30
+     */
     public function paginate()
     {
         $page_count = $this->getPageCount();
@@ -45,5 +52,41 @@ class WalletApiService extends Service
             ->where('status', 1)
             ->orderByDesc('updated_at')
             ->paginate($page_count);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     * @Author: Roy
+     * @DateTime: 2022/6/21 上午 12:32
+     */
+    public function getWalletWithDetail()
+    {
+        if (is_null($this->getRequestByKey('wallets.id'))) {
+            return null;
+        }
+        return $this->getEntity()
+            ->with([
+                WalletDetailEntity::Table => function ($queryDetail) {
+                    return $queryDetail;
+                },
+            ])
+            ->find($this->getRequestByKey('wallets.id'));
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     * @Author: Roy
+     * @DateTime: 2022/6/21 上午 01:11
+     */
+    public function getWalletWithUser()
+    {
+        if (is_null($this->getRequestByKey('wallets.id'))) {
+            return null;
+        }
+        return $this->getEntity()
+            ->with([
+                WalletUserEntity::Table,
+            ])
+            ->find($this->getRequestByKey('wallets.id'));
     }
 }

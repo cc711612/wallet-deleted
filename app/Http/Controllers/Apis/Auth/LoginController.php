@@ -51,17 +51,17 @@ class LoginController extends Controller
             return response()->json([
                 'status'  => false,
                 'code'    => 400,
-                'message' => ['password' => ['密碼有誤']],
+                'message' => "密碼有誤",
             ]);
         }
         # set cache
         $this->MemberTokenCache();
 
         return response()->json([
-            'status'   => true,
-            'code'     => 200,
-            'message'  => [],
-            'data'     => [
+            'status'  => true,
+            'code'    => 200,
+            'message' => [],
+            'data'    => [
                 'id'           => Arr::get(Auth::user(), 'id'),
                 'name'         => Arr::get(Auth::user(), 'name'),
                 'member_token' => Arr::get(Auth::user(), 'token'),
