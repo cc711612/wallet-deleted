@@ -73,6 +73,7 @@ class InitializationUserWalletSeeder extends Seeder
             ]);
             # 餐費
             $WalletDetailEntity = $WalletEntity->wallet_details()->create([
+                'type'                     => WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE,
                 'title'                    => '餐費',
                 'symbol_operation_type_id' => SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
                 'value'                    => 1000,
