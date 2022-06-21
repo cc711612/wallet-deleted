@@ -15,6 +15,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
 
 class UserEntity extends Authenticatable
 {
@@ -59,6 +61,17 @@ class UserEntity extends Authenticatable
     protected $casts = [
         'verified_at' => 'datetime',
     ];
+
+    /**
+     * @param  array  $value
+     *
+     * @Author: Roy
+     * @DateTime: 2022/6/21 上午 11:31
+     */
+    public function setPasswordAttribute(string $value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

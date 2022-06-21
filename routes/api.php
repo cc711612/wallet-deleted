@@ -1,12 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Apis\Auth\LogoutController;
 use App\Http\Controllers\Apis\Auth\LoginController;
 use App\Http\Controllers\Apis\Wallets\WalletController;
 use App\Http\Controllers\Apis\Wallets\WalletDetailController;
-
+use App\Http\Controllers\Apis\Auth\RegisterController;
+use App\Http\Controllers\Apis\Wallets\Auth\WalletRegisterController;
+use App\Http\Controllers\Apis\Wallets\Auth\WalletLoginController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,7 +22,7 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
     # 需要member_token的
     Route::group(['middleware' => ['VerifyApi']], function () {
         # 登出相關
-        Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
+        Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
             Route::name("logout")->post("/logout", [LogoutController::class, 'logout']);
         });
         Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
@@ -41,11 +42,20 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         });
     });
     # 登入相關
-    Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
+    Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
         Route::name("login")->post("/login", [LoginController::class, 'login']);
+        Route::name("register")->post("/register", [RegisterController::class, 'register']);
     });
     # 帳本成員
-    Route::name("wallet.detail.user")->post("/wallet/{wallet}/detail/user", [WalletDetailController::class, 'user']);
+    Route::group(['as' => 'wallet.', 'prefix' => '/wallet'], function () {
+        Route::name("user")->post("/{wallet}/user", [WalletController::class, 'user']);
+        # 登入
+        Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
+            Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
+            Route::name("register")->post("/register", [WalletRegisterController::class, 'register']);
+        });
+    });
+
 });
 Route::fallback(function () {
     return response([

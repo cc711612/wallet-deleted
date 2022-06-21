@@ -13,50 +13,40 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 
 trait WalletUserAuthLoginTrait
 {
     /**
+     * @param  string  $token
+     *
      * @Author: Roy
-     * @DateTime: 2021/8/12 下午 09:13
+     * @DateTime: 2022/6/21 下午 02:56
      */
-    private function MemberTokenCache()
+    private function setMemberTokenCache(WalletUserEntity $WalletUserEntity)
     {
-        # 更新token
-        $this->updateToken();
-    }
-
-    /**
-     * @return $this
-     * @Author: Roy
-     * @DateTime: 2021/8/12 下午 09:13
-     */
-    private function updateToken()
-    {
+        $token = $WalletUserEntity->token;
         try {
             # 檢查token
-            if ($this->checkToken()) {
+            if ($this->checkToken($token)) {
                 # 清除cache
-                $this->cleanToken();
+                $this->cleanToken($token);
             }
-            $user = Auth::user();
-            $user->token = Str::random(12);
-            $cache = Cache::add(sprintf(config('cache_key.api.wallet_member_token'), $user->token), Auth::user(),
+
+            $cache = Cache::add(sprintf(config('cache_key.api.wallet_member_token'), $token), collect([$WalletUserEntity])->keyBy('wallet_id'),
                 config('app.login_timeout'));
             # Log
             if ($cache === true) {
                 Log::channel('token')->info(sprintf("Login info : %s ", json_encode([
-                    'user_id'   => $user->id,
-                    'cache_key' => sprintf(config('cache_key.api.wallet_member_token'), $user->token),
-                    'token'     => $user->token,
+                    'cache_key' => sprintf(config('cache_key.api.wallet_member_token'), $token),
+                    'token'     => $token,
                     'end_time'  => Carbon::now()->addSeconds(config('app.login_timeout'))->toDateTimeString(),
                 ])));
             };
-            $user->save();
+
         } catch (\Throwable $exception) {
             Log::channel('error')->info(sprintf("Login errors : %s ", json_encode($exception, JSON_UNESCAPED_UNICODE)));
         }
-        return $this;
     }
 
     /**
@@ -66,12 +56,8 @@ trait WalletUserAuthLoginTrait
      * @Author: Roy
      * @DateTime: 2021/8/13 上午 10:44
      */
-    private function checkToken(string $token = null)
+    private function checkToken(string $token)
     {
-
-        if (is_null($token) === true) {
-            $token = Arr::get(Auth::user(), 'token');
-        }
         return Cache::has($this->getCacheKey($token));
     }
 
@@ -80,9 +66,9 @@ trait WalletUserAuthLoginTrait
      * @Author: Roy
      * @DateTime: 2021/8/13 上午 10:36
      */
-    private function cleanToken()
+    private function cleanToken(string $token)
     {
-        Log::channel('token')->info(sprintf("Token Clean info : %s ", $this->getCacheKey()));
+        Log::channel('token')->info(sprintf("Token Clean info : %s ", $this->getCacheKey($token)));
         return Cache::forget($this->getCacheKey());
     }
 
@@ -92,11 +78,8 @@ trait WalletUserAuthLoginTrait
      * @Author: Roy
      * @DateTime: 2021/8/13 上午 10:47
      */
-    private function getCacheKey(string $token = null)
+    private function getCacheKey(string $token)
     {
-        if (is_null($token) === true) {
-            $token = Arr::get(Auth::user(), 'token');
-        }
         return sprintf(config('cache_key.api.wallet_member_token'), $token);
     }
 }

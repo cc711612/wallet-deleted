@@ -100,7 +100,6 @@ class WalletApiService extends Service
      */
     public function createWalletWithUser()
     {
-
         return DB::transaction(function () {
             $Entity = $this->getEntity()
                 ->create($this->getRequestByKey('wallets'));
@@ -108,5 +107,40 @@ class WalletApiService extends Service
             $this->updateWalletUserCache($this->getRequestByKey('wallets.user_id'));
             return $Entity;
         });
+    }
+
+    /**
+     * @return mixed
+     * @Author: Roy
+     * @DateTime: 2022/6/21 下午 03:26
+     */
+    public function createWalletUserById()
+    {
+        return DB::transaction(function () {
+            $Entity = $this->getEntity()
+                ->find($this->getRequestByKey('wallets.id'));
+
+            if (is_null($Entity)) {
+                return null;
+            }
+
+            return $Entity->wallet_users()->create($this->getRequestByKey('wallet_users'));
+        });
+    }
+
+    /**
+     * @return null
+     * @Author: Roy
+     * @DateTime: 2022/6/21 下午 03:50
+     */
+    public function getWalletByCode()
+    {
+        if (is_null($this->getRequestByKey('wallets.code'))) {
+            return null;
+        }
+        return $this->getEntity()
+            ->where('status', 1)
+            ->where('code', $this->getRequestByKey('wallets.code'))
+            ->first();
     }
 }

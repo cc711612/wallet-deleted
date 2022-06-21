@@ -19,8 +19,6 @@ use App\Http\Validators\Apis\Wallets\Details\WalletDetailUpdateValidator;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailIndexValidator;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
-use App\Http\Validators\Apis\Wallets\Details\WalletDetailUserValidator;
-use App\Http\Requesters\Apis\Wallets\Details\WalletDetailUserRequest;
 use App\Models\Wallets\Databases\Services\WalletDetailApiService;
 
 class WalletDetailController extends Controller
@@ -113,48 +111,6 @@ class WalletDetailController extends Controller
             ],
         ];
 
-        return response()->json($response);
-    }
-
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     *
-     * @Author: Roy
-     * @DateTime: 2022/6/21 上午 01:00
-     */
-    public function user(Request $request)
-    {
-        $requester = (new WalletDetailUserRequest($request));
-
-        $Validate = (new WalletDetailUserValidator($requester))->validate();
-        if ($Validate->fails() === true) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 400,
-                'message' => $Validate->errors()->first(),
-                'data'    => [],
-            ]);
-        }
-        $Wallet = $this->wallet_api_service
-            ->setRequest($requester->toArray())
-            ->getWalletWithUser();
-
-        $response = [
-            'status'  => true,
-            'code'    => 200,
-            'message' => null,
-            'data'    => [
-                'wallet' => [
-                    'users' => $Wallet->wallet_users->map(function ($User) {
-                        return [
-                            'id'       => Arr::get($User, 'id'),
-                            'name'     => Arr::get($User, 'name'),
-                            'is_admin' => Arr::get($User, 'is_admin'),
-                        ];
-                    }),
-                ],
-            ],
-        ];
         return response()->json($response);
     }
 

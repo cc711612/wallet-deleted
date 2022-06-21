@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 class VerifyApi
 {
     use AuthLoginTrait;
+
     /**
      * Handle an incoming request.
      *
@@ -36,22 +37,29 @@ class VerifyApi
         }
 
         if ($this->checkToken($member_token) === false) {
-            Log::channel('token')->info(sprintf("Verify token is empty info : %s ", $request->member_token));
-            return response()->json([
-                'status'   => false,
-                'code'     => 400,
-                'message'  => ['member_token' => ['請重新登入']],
-                'data'     => [],
-            ]);
+            return response()->json($this->get_error_response($member_token));
         }
         # 取得快取資料
         $LoginCache = Cache::get($this->getCacheKey($member_token));
-
+        if (is_null($LoginCache) === true) {
+            return response()->json($this->get_error_response($member_token));
+        }
         # 若有新增請記得至 ResponseApiServiceProvider 排除
         $request->merge([
             'user' => $LoginCache,
         ]);
 
         return $next($request);
+    }
+
+    private function get_error_response($token)
+    {
+        Log::channel('token')->info(sprintf("Verify token is empty info : %s ", $token));
+        return [
+            'status'  => false,
+            'code'    => 401,
+            'message' => "請重新登入",
+            'data'    => [],
+        ];
     }
 }

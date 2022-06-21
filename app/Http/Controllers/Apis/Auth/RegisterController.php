@@ -9,19 +9,20 @@ namespace App\Http\Controllers\Apis\Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Traits\AuthLoginTrait;
-use App\Http\Requesters\Apis\Auth\LoginRequest;
-use App\Http\Validators\Apis\Auth\LoginValidator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use App\Http\Requesters\Apis\Auth\RegisterRequest;
+use App\Http\Validators\Apis\Auth\RegisterValidator;
+use App\Models\Users\Databases\Services\UserApiService;
 
 /**
- * Class LoginController
+ * Class RegisterController
  *
  * @package App\Http\Controllers\Apis\Auth
  * @Author: Roy
- * @DateTime: 2022/6/19 下午 02:54
+ * @DateTime: 2022/6/21 上午 11:11
  */
-class LoginController extends Controller
+class RegisterController extends Controller
 {
     use AuthLoginTrait;
 
@@ -32,11 +33,11 @@ class LoginController extends Controller
      * @Author: Roy
      * @DateTime: 2022/6/20 下午 03:16
      */
-    public function login(Request $request)
+    public function register(Request $request)
     {
-        $Requester = (new LoginRequest($request));
+        $requester = (new RegisterRequest($request));
 
-        $Validate = (new LoginValidator($Requester))->validate();
+        $Validate = (new RegisterValidator($requester))->validate();
         if ($Validate->fails() === true) {
             return response()->json([
                 'status'  => false,
@@ -44,6 +45,18 @@ class LoginController extends Controller
                 'message' => $Validate->errors()->first(),
             ]);
         }
+        $UserEntity = (new UserApiService())
+//            ->setRequest($requester->toArray())
+            ->create(Arr::get($requester, 'users'));
+
+        if (is_null($UserEntity)) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => $Validate->errors()->first(),
+            ]);
+        }
+
         $credentials = request(['account', 'password']);
 
         #認證失敗
