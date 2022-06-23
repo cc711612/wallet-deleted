@@ -178,7 +178,7 @@ class WalletController extends Controller
         }
         $Wallet = $this->wallet_api_service
             ->setRequest($requester->toArray())
-            ->getWalletWithUser();
+            ->getWalletWithUserByCode();
 
         $response = [
             'status'  => true,

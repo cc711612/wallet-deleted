@@ -83,16 +83,14 @@ class WalletApiService extends Service
      * @Author: Roy
      * @DateTime: 2022/6/21 上午 01:11
      */
-    public function getWalletWithUser()
+    public function getWalletWithUserByCode()
     {
-        if (is_null($this->getRequestByKey('wallets.id'))) {
-            return null;
-        }
         return $this->getEntity()
             ->with([
                 WalletUserEntity::Table,
             ])
-            ->find($this->getRequestByKey('wallets.id'));
+            ->where('code', $this->getRequestByKey('wallets.code'))
+            ->first();
     }
 
     /**

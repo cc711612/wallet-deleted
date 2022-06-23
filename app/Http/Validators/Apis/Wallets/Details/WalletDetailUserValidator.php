@@ -39,13 +39,14 @@ class WalletDetailUserValidator extends ValidatorAbstracts
         return [
             'wallets.code' => [
                 'required',
+                Rule::exists('wallets', 'code'),
             ],
-            'wallets.id'   => [
-                'required',
-                Rule::exists('wallets', 'id')->where(function ($query) {
-                    $query->where('code', Arr::get($this->request, 'wallets.code'));
-                }),
-            ],
+//            'wallets.id'   => [
+//                'required',
+//                Rule::exists('wallets', 'id')->where(function ($query) {
+//                    $query->where('code', Arr::get($this->request, 'wallets.code'));
+//                }),
+//            ],
         ];
     }
 
@@ -57,9 +58,10 @@ class WalletDetailUserValidator extends ValidatorAbstracts
     protected function messages(): array
     {
         return [
-            'wallets.id.required'   => '系統異常',
-            'wallets.id.exists'     => '帳本驗證碼錯誤',
+//            'wallets.id.required'   => '系統異常',
+//            'wallets.id.exists'     => '帳本驗證碼錯誤',
             'wallets.code.required' => '帳本驗證碼為必填',
+            'wallets.code.exists'   => '帳本驗證碼錯誤',
         ];
     }
 }

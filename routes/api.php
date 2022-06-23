@@ -19,6 +19,20 @@ use App\Http\Controllers\Apis\Wallets\Auth\WalletLoginController;
 |
 */
 Route::group(['middleware' => [], 'as' => 'api.',], function () {
+    # 登入相關
+    Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
+        Route::name("login")->post("/login", [LoginController::class, 'login']);
+        Route::name("register")->post("/register", [RegisterController::class, 'register']);
+    });
+    # 帳本成員
+    Route::group(['as' => 'wallet.', 'prefix' => '/wallet'], function () {
+        Route::name("user")->post("/user", [WalletController::class, 'user']);
+        # 登入
+        Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
+            Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
+            Route::name("register")->post("/register", [WalletRegisterController::class, 'register']);
+        });
+    });
     # 需要member_token的
     Route::group(['middleware' => ['VerifyApi']], function () {
         # 登出相關
@@ -39,20 +53,6 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
                 Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
                 Route::name("detail.index")->post("/detail/list", [WalletDetailController::class, 'index']);
             });
-        });
-    });
-    # 登入相關
-    Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
-        Route::name("login")->post("/login", [LoginController::class, 'login']);
-        Route::name("register")->post("/register", [RegisterController::class, 'register']);
-    });
-    # 帳本成員
-    Route::group(['as' => 'wallet.', 'prefix' => '/wallet'], function () {
-        Route::name("user")->post("/{wallet}/user", [WalletController::class, 'user']);
-        # 登入
-        Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
-            Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
-            Route::name("register")->post("/register", [WalletRegisterController::class, 'register']);
         });
     });
 
