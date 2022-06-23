@@ -190,7 +190,7 @@ class WalletController extends Controller
                         return [
                             'id'       => Arr::get($User, 'id'),
                             'name'     => Arr::get($User, 'name'),
-                            'is_admin' => Arr::get($User, 'is_admin'),
+                            'is_admin' => Arr::get($User, 'is_admin',0),
                         ];
                     }),
                 ],
