@@ -44,7 +44,7 @@ class InitializationUserWalletSeeder extends Seeder
             $token = Str::random(10);
             $UserEntity = UserEntity::create(
                 array_merge($data, [
-                    'password'    => Hash::make('123456789'),
+                    'password'    => '123456789',
                     'token'       => Str::random(10),
                     'verified_at' => Carbon::now()->toDateTimeString(),
                 ])

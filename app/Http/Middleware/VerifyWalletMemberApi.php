@@ -32,7 +32,7 @@ class VerifyWalletMemberApi
             return response()->json([
                 'status'  => false,
                 'code'    => 400,
-                'message' => ['member_token' => ['請帶入 member_token']],
+                'message' => '請帶入 member_token',
                 'data'    => [],
             ]);
         }
@@ -42,7 +42,7 @@ class VerifyWalletMemberApi
             return response()->json([
                 'status'  => false,
                 'code'    => 400,
-                'message' => ['member_token' => ['請重新登入']],
+                'message' => "請重新登入",
                 'data'    => [],
             ]);
         }

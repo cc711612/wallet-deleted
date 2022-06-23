@@ -14,6 +14,7 @@ use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Wallets\Auth\WalletUserAuthCacheTrait;
+use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 
 class WalletApiService extends Service
 {
@@ -142,5 +143,37 @@ class WalletApiService extends Service
             ->where('status', 1)
             ->where('code', $this->getRequestByKey('wallets.code'))
             ->first();
+    }
+
+    /**
+     * @param  array  $create
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     * @Author: Roy
+     * @DateTime: 2022/6/22 上午 12:04
+     */
+    public function createWalletDetail()
+    {
+        if (is_null($this->getRequestByKey('wallets.id'))) {
+            return null;
+        }
+        return DB::transaction(function () {
+            $Entity = $this->getEntity()
+                ->find($this->getRequestByKey('wallets.id'));
+            if (is_null($Entity) === true) {
+                return null;
+            }
+            $DetailEntity = $Entity->wallet_details()->create($this->getRequestByKey('wallet_details'));
+            # 不等於公帳
+            if ($this->getRequestByKey('wallet_details.type') != WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE) {
+                $Users = $this->getRequestByKey('wallet_detail_wallet_user');
+                # 全選
+                if ($this->getRequestByKey('wallet_details.select_all') == 1) {
+                    $Users = $Entity->wallet_users()->get()->pluck('id')->toArray();
+                }
+                $DetailEntity->wallet_users()->sync($Users);
+            }
+            return $DetailEntity;
+        });
     }
 }

@@ -31,7 +31,7 @@ class VerifyApi
             return response()->json([
                 'status'  => false,
                 'code'    => 400,
-                'message' => ['member_token' => ['請帶入 member_token']],
+                'message' => '請帶入 member_token',
                 'data'    => [],
             ]);
         }

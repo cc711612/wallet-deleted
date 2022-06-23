@@ -16,11 +16,11 @@ class InitializationWalletDetails extends Migration
         Schema::create('wallet_details', function (Blueprint $table) {
             $table->bigIncrements('id')->comment('流水號');
             $table->unsignedBigInteger('wallet_id')->nullable()->comment('wallet_id');
-            $table->smallInteger('type')->nullable();
+            $table->smallInteger('type')->default(\App\Models\Wallets\Contracts\Constants\WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE);
             $table->unsignedBigInteger('payment_wallet_user_id')->nullable()->comment('付款人');
             $table->string('title');
-            $table->smallInteger('symbol_operation_type_id')->nullable()->comment('加減項');
-            $table->smallInteger('select_all')->nullable()->comment('帳本內成員全選');
+            $table->smallInteger('symbol_operation_type_id')->default(\App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT)->comment('加減項');
+            $table->smallInteger('select_all')->default(0)->comment('帳本內成員全選');
             $table->float('value')->default(0)->comment('付款金額');
             $table->unsignedBigInteger('created_by')->nullable()->comment('創建ID');
             $table->unsignedBigInteger('updated_by')->nullable()->comment('更新ID');

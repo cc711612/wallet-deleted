@@ -136,15 +136,14 @@ class WalletDetailController extends Controller
         }
         #Create
         $Entity = $this->wallet_api_service
-            ->create(Arr::get($requester, 'wallets'));
+            ->setRequest($requester->toArray())
+            ->createWalletDetail();
 
         return response()->json([
             'status'  => true,
             'code'    => 200,
             'message' => [],
-            'data'    => [
-                'wallet' => $Entity->toArray(),
-            ],
+            'data'    => [],
         ]);
     }
 
@@ -153,7 +152,7 @@ class WalletDetailController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      * @Author: Roy
-     * @DateTime: 2022/6/20 下午 10:29
+     * @DateTime: 2022/6/22 上午 12:23
      */
     public function update(Request $request)
     {
