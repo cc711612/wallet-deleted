@@ -94,7 +94,7 @@ class WalletDetailController extends Controller
                             'title'                    => Arr::get($Detail, 'title'),
                             'payment_user_id'          => Arr::get($Detail, 'payment_wallet_user_id'),
                             'symbol_operation_type_id' => Arr::get($Detail, 'symbol_operation_type_id'),
-                            'select_all'               => is_null(Arr::get($Detail, 'select_all')) ? false : true,
+                            'select_all'               => Arr::get($Detail, 'select_all') ? true : false,
                             'value'                    => Arr::get($Detail, 'value', 0),
                             'created_user_id'          => Arr::get($Detail, 'created_by'),
                             'updated_user_id'          => Arr::get($Detail, 'updated_by'),

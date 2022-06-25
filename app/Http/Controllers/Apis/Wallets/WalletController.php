@@ -157,6 +157,7 @@ class WalletController extends Controller
             'data'    => [],
         ]);
     }
+
     /**
      * @param  \Illuminate\Http\Request  $request
      *
@@ -190,7 +191,7 @@ class WalletController extends Controller
                         return [
                             'id'       => Arr::get($User, 'id'),
                             'name'     => Arr::get($User, 'name'),
-                            'is_admin' => Arr::get($User, 'is_admin',0),
+                            'is_admin' => Arr::get($User, 'is_admin') ? true : false,
                         ];
                     }),
                 ],
