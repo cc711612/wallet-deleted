@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Mains\Auth\LoginController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,5 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('https://eazysplit.usongrat.tw/#/home');
+});
+Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
+    Route::name("login")->get("/login", [LoginController::class, 'login']);
 });
