@@ -41,7 +41,7 @@ class VerifyWalletMemberApi
             Log::channel('token')->info(sprintf("Verify token is empty info : %s ", $request->member_token));
             return response()->json([
                 'status'  => false,
-                'code'    => 400,
+                'code'    => 403,
                 'message' => "請重新登入",
                 'data'    => [],
             ]);

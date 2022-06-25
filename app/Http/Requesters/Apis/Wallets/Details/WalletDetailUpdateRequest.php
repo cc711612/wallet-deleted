@@ -27,9 +27,8 @@ class WalletDetailUpdateRequest extends Request
             'wallet_details.symbol_operation_type_id' => SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
             'wallet_details.select_all'               => 0,
             'wallet_details.value'                    => 0,
-            'wallet_details.created_by'               => null,
             'wallet_details.updated_by'               => null,
-            'wallet_detail_wallet_user'               => null,
+            'wallet_detail_wallet_user'               => [],
         ];
     }
 
@@ -53,8 +52,6 @@ class WalletDetailUpdateRequest extends Request
             'wallet_details.symbol_operation_type_id' => Arr::get($row, 'symbol_operation_type_id'),
             'wallet_details.select_all'               => Arr::get($row, 'select_all'),
             'wallet_details.value'                    => Arr::get($row, 'value'),
-            'wallet_details.created_by'               => Arr::get($row,
-                sprintf("wallet_user.%s.id", Arr::get($row, 'wallet'))),
             'wallet_details.updated_by'               => Arr::get($row,
                 sprintf("wallet_user.%s.id", Arr::get($row, 'wallet'))),
             'wallet_detail_wallet_user'               => Arr::get($row, 'users'),

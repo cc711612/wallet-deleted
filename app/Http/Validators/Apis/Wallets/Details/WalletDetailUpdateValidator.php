@@ -76,7 +76,7 @@ class WalletDetailUpdateValidator extends ValidatorAbstracts
                     1,
                 ]),
             ],
-            'wallet_details.created_by'               => [
+            'wallet_details.updated_by'               => [
                 'required',
                 'integer',
             ],

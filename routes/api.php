@@ -50,7 +50,7 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
             # 帳本明細
             Route::group(['prefix' => '{wallet}'], function () {
-                Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
+                Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy','show']);
                 Route::name("detail.index")->post("/detail/list", [WalletDetailController::class, 'index']);
             });
         });

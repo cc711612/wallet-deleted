@@ -31,6 +31,7 @@ class WalletDetailEntity extends Model
         'title',
         'symbol_operation_type_id',
         'value',
+        'select_all',
         'created_by',
         'updated_by',
         'deleted_by',
