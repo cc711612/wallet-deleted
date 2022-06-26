@@ -72,7 +72,9 @@ class WalletApiService extends Service
         return $this->getEntity()
             ->with([
                 WalletDetailEntity::Table => function ($queryDetail) {
-                    return $queryDetail;
+                    return $queryDetail->with([
+                        WalletUserEntity::Table
+                    ]);
                 },
             ])
             ->find($this->getRequestByKey('wallets.id'));

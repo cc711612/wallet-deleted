@@ -96,17 +96,18 @@ class WalletDetailController extends Controller
                             'symbol_operation_type_id' => Arr::get($Detail, 'symbol_operation_type_id'),
                             'select_all'               => Arr::get($Detail, 'select_all') ? true : false,
                             'value'                    => Arr::get($Detail, 'value', 0),
-                            'created_user_id'          => Arr::get($Detail, 'created_by'),
-                            'updated_user_id'          => Arr::get($Detail, 'updated_by'),
+                            'users'                    => $Detail->wallet_users->pluck('id')->toArray(),
+                            'created_by'               => Arr::get($Detail, 'created_by'),
+                            'updated_by'               => Arr::get($Detail, 'updated_by'),
                             'created_at'               => Arr::get($Detail, 'created_at')->toDateTimeString(),
                             'updated_at'               => Arr::get($Detail, 'updated_at')->toDateTimeString(),
                         ];
                     })->toArray(),
                     'total'   => [
-                        'revenue'     => $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE,
+                        'income'   => $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE,
                             collect([]))->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,
                             collect([]))->sum('value'),
-                        'expenditure' => $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE,
+                        'expenses' => $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE,
                             collect([]))->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
                             collect([]))->sum('value'),
                     ],
@@ -281,7 +282,7 @@ class WalletDetailController extends Controller
             return response()->json($Response);
         }
         # 刪除
-        $Detail->update(Arr::get($requester,'wallet_details'));
+        $Detail->update(Arr::get($requester, 'wallet_details'));
 
         return response()->json([
             'status'  => true,
