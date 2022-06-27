@@ -23,7 +23,7 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
     # 登入相關
     Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
         Route::name("login")->post("/login", [LoginController::class, 'login']);
-        Route::name("cache")->post("/cache", [LoginController::class, 'cache']);
+        Route::name("cache")->any("/cache", [LoginController::class, 'cache']);
         Route::name("register")->post("/register", [RegisterController::class, 'register']);
     });
     # 帳本成員
