@@ -69,7 +69,7 @@ class LoginController extends Controller
                 'id'           => Arr::get(Auth::user(), 'id'),
                 'name'         => Arr::get(Auth::user(), 'name'),
                 'member_token' => Arr::get(Auth::user(), 'token'),
-                'wallets'      => [
+                'wallet'       => [
                     'id'   => Arr::get($Wallet, 'id'),
                     'code' => Arr::get($Wallet, 'code'),
                 ],
