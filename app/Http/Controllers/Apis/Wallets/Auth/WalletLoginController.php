@@ -81,6 +81,7 @@ class WalletLoginController extends Controller
             'data'    => [
                 'id'           => Arr::get($UserEntity, 'id'),
                 'name'         => Arr::get($UserEntity, 'name'),
+                'wallet_id'    => Arr::get($UserEntity, 'wallet_id'),
                 'member_token' => Arr::get($UserEntity, 'token'),
             ],
         ]);
