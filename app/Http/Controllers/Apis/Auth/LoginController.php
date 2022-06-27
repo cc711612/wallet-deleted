@@ -68,4 +68,21 @@ class LoginController extends Controller
             ],
         ]);
     }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @Author: Roy
+     * @DateTime: 2022/6/28 上午 05:44
+     */
+    public function cache(Request $request)
+    {
+        return response()->json([
+            'status'  => true,
+            'code'    => 200,
+            'message' => [],
+            'data'    => [],
+        ]);
+    }
 }

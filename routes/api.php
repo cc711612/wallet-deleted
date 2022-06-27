@@ -23,6 +23,7 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
     # 登入相關
     Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
         Route::name("login")->post("/login", [LoginController::class, 'login']);
+        Route::name("cache")->post("/cache", [LoginController::class, 'cache']);
         Route::name("register")->post("/register", [RegisterController::class, 'register']);
     });
     # 帳本成員
@@ -57,7 +58,6 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
                     Route::name("show")->post("/{detail}", [WalletDetailController::class, 'show']);
                 });
                 Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
-
             });
         });
     });
