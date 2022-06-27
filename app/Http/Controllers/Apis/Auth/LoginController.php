@@ -56,7 +56,11 @@ class LoginController extends Controller
         }
         # set cache
         $this->MemberTokenCache();
-
+        # 最後更新的Wallet
+        $Wallet = Auth::user()->wallets()->get()->sortByDesc('updated_at')->first();
+        if (is_null($Wallet)) {
+            $Wallet = collect([]);
+        }
         return response()->json([
             'status'  => true,
             'code'    => 200,
@@ -65,6 +69,10 @@ class LoginController extends Controller
                 'id'           => Arr::get(Auth::user(), 'id'),
                 'name'         => Arr::get(Auth::user(), 'name'),
                 'member_token' => Arr::get(Auth::user(), 'token'),
+                'wallets'      => [
+                    'id'   => Arr::get($Wallet, 'id'),
+                    'code' => Arr::get($Wallet, 'code'),
+                ],
             ],
         ]);
     }

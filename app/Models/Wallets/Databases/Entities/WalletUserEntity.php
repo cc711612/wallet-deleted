@@ -44,6 +44,16 @@ class WalletUserEntity extends Model
     ];
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @Author: Roy
+     * @DateTime: 2022/6/28 上午 06:02
+     */
+    public function wallets()
+    {
+        return $this->belongsTo(WalletEntity::class, 'wallet_id', 'id');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      * @Author: Roy
      * @DateTime: 2022/6/19 下午 03:55

@@ -9,6 +9,7 @@ namespace App\Models\Wallets\Databases\Services;
 use App\Concerns\Databases\Service;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
+use App\Models\Wallets\Databases\Entities\WalletEntity;
 
 class WalletUserApiService extends Service
 {
@@ -38,6 +39,9 @@ class WalletUserApiService extends Service
             return null;
         }
         return $this->getEntity()
+            ->with([
+                WalletEntity::Table,
+            ])
             ->where('wallet_id', $this->getRequestByKey('wallet_users.wallet_id'))
             ->where('name', $this->getRequestByKey('wallet_users.name'))
             ->first();
@@ -54,6 +58,9 @@ class WalletUserApiService extends Service
             return null;
         }
         return $this->getEntity()
+            ->with([
+                WalletEntity::Table,
+            ])
             ->where('wallet_id', $this->getRequestByKey('wallet_users.wallet_id'))
             ->where('token', $this->getRequestByKey('wallet_users.token'))
             ->first();
