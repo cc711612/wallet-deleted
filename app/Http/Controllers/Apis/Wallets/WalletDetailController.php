@@ -204,14 +204,11 @@ class WalletDetailController extends Controller
         $Detail = $this->wallet_detail_api_service
             ->setRequest($requester->toArray())
             ->findDetail();
+
         # 認證
         if (is_null($Detail) === true) {
             Arr::set($Response, 'code', 400);
             Arr::set($Response, 'message', '參數有誤');
-            return response()->json($Response);
-        }
-        if ($Detail->created_by != Arr::get($requester, 'wallet_users.id') && Arr::get($requester,
-                'wallet_user.is_admin') != 1) {
             return response()->json($Response);
         }
 

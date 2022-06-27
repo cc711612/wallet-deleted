@@ -15,6 +15,8 @@ use Illuminate\Support\Arr;
 use App\Traits\Wallets\Auth\WalletUserAuthLoginTrait;
 use App\Models\Wallets\Databases\Services\WalletApiService;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
+use App\Http\Requesters\Apis\Wallets\Auth\LoginTokenRequest;
+use App\Http\Validators\Apis\Wallets\Auth\LoginTokenValidator;
 
 /**
  * Class WalletLoginController
@@ -71,6 +73,67 @@ class WalletLoginController extends Controller
                 'message' => "管理者不得使用此方式登入",
             ]);
         }
+        # set cache
+        $this->setMemberTokenCache($UserEntity);
+
+        return response()->json([
+            'status'  => true,
+            'code'    => 200,
+            'message' => [],
+            'data'    => [
+                'id'           => Arr::get($UserEntity, 'id'),
+                'name'         => Arr::get($UserEntity, 'name'),
+                'wallet_id'    => Arr::get($UserEntity, 'wallet_id'),
+                'member_token' => Arr::get($UserEntity, 'token'),
+            ],
+        ]);
+    }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @Author: Roy
+     * @DateTime: 2022/6/28 上午 05:33
+     */
+    public function token(Request $request)
+    {
+        $requester = (new LoginTokenRequest($request));
+
+        $Wallet = (new WalletApiService())
+            ->setRequest($requester->toArray())
+            ->getWalletByCode();
+
+        $requester->__set('wallets.id', is_null($Wallet) ? null : $Wallet->id);
+        $requester->__set('wallet_users.wallet_id', is_null($Wallet) ? null : $Wallet->id);
+
+        $Validate = (new LoginTokenValidator($requester))->validate();
+        if ($Validate->fails() === true) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => $Validate->errors()->first(),
+            ]);
+        }
+        $UserEntity = (new WalletUserApiService())
+            ->setRequest($requester->toArray())
+            ->getWalletUserByTokenAndWalletId();
+
+        if (is_null($UserEntity)) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 401,
+                'message' => "系統錯誤",
+            ]);
+        }
+        if ($UserEntity->is_admin == 1) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 401,
+                'message' => "管理者不得使用此方式登入",
+            ]);
+        }
+
         # set cache
         $this->setMemberTokenCache($UserEntity);
 

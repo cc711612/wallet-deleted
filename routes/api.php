@@ -8,6 +8,7 @@ use App\Http\Controllers\Apis\Wallets\WalletDetailController;
 use App\Http\Controllers\Apis\Auth\RegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletRegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletLoginController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,6 +31,7 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         # 登入
         Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
             Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
+            Route::name("login.token")->post("/login/token", [WalletLoginController::class, 'token']);
             Route::name("register")->post("/register", [WalletRegisterController::class, 'register']);
         });
     });
@@ -50,8 +52,12 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
         Route::group(['as' => 'wallet.', 'prefix' => 'wallet'], function () {
             # 帳本明細
             Route::group(['prefix' => '{wallet}'], function () {
-                Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy','show']);
-                Route::name("detail.index")->post("/detail/list", [WalletDetailController::class, 'index']);
+                Route::group(['prefix' => 'detail', 'as' => 'detail.'], function () {
+                    Route::name("index")->post("/list", [WalletDetailController::class, 'index']);
+                    Route::name("show")->post("/{detail}", [WalletDetailController::class, 'show']);
+                });
+                Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
+
             });
         });
     });

@@ -42,4 +42,20 @@ class WalletUserApiService extends Service
             ->where('name', $this->getRequestByKey('wallet_users.name'))
             ->first();
     }
+
+    /**
+     * @return null
+     * @Author: Roy
+     * @DateTime: 2022/6/28 上午 05:38
+     */
+    public function getWalletUserByTokenAndWalletId()
+    {
+        if (is_null($this->getRequestByKey('wallet_users.wallet_id')) || is_null($this->getRequestByKey('wallet_users.token'))) {
+            return null;
+        }
+        return $this->getEntity()
+            ->where('wallet_id', $this->getRequestByKey('wallet_users.wallet_id'))
+            ->where('token', $this->getRequestByKey('wallet_users.token'))
+            ->first();
+    }
 }
