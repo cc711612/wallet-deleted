@@ -44,6 +44,14 @@ class WalletLoginController extends Controller
             ->setRequest($requester->toArray())
             ->getWalletByCode();
 
+        if (is_null($Wallet)) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => "此帳簿不存在",
+            ]);
+        }
+
         $requester->__set('wallets.id', is_null($Wallet) ? null : $Wallet->id);
         $requester->__set('wallet_users.wallet_id', is_null($Wallet) ? null : $Wallet->id);
 
@@ -86,8 +94,8 @@ class WalletLoginController extends Controller
                 'wallet_id'    => Arr::get($UserEntity, 'wallet_id'),
                 'member_token' => Arr::get($UserEntity, 'token'),
                 'wallet'       => [
-                    'id'   => Arr::get($UserEntity, 'wallets.id'),
-                    'code' => Arr::get($UserEntity, 'wallets.code'),
+                    'id'   => Arr::get($Wallet, 'id'),
+                    'code' => Arr::get($Wallet, 'code'),
                 ],
             ],
         ]);
@@ -107,6 +115,14 @@ class WalletLoginController extends Controller
         $Wallet = (new WalletApiService())
             ->setRequest($requester->toArray())
             ->getWalletByCode();
+
+        if (is_null($Wallet)) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => "此帳簿不存在",
+            ]);
+        }
 
         $requester->__set('wallets.id', is_null($Wallet) ? null : $Wallet->id);
         $requester->__set('wallet_users.wallet_id', is_null($Wallet) ? null : $Wallet->id);
@@ -151,8 +167,8 @@ class WalletLoginController extends Controller
                 'wallet_id'    => Arr::get($UserEntity, 'wallet_id'),
                 'member_token' => Arr::get($UserEntity, 'token'),
                 'wallet'       => [
-                    'id'   => Arr::get($UserEntity, 'wallets.id'),
-                    'code' => Arr::get($UserEntity, 'wallets.code'),
+                    'id'   => Arr::get($Wallet, 'id'),
+                    'code' => Arr::get($Wallet, 'code'),
                 ],
             ],
         ]);

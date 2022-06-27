@@ -47,7 +47,7 @@ class LoginTokenValidator extends ValidatorAbstracts
             ],
             'wallets.id'         => [
                 'required',
-                'exists:wallets,id',
+//                'exists:wallets,id',
             ],
             'wallet_users.token' => [
                 'required',

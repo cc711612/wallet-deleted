@@ -39,9 +39,6 @@ class WalletUserApiService extends Service
             return null;
         }
         return $this->getEntity()
-            ->with([
-                WalletEntity::Table,
-            ])
             ->where('wallet_id', $this->getRequestByKey('wallet_users.wallet_id'))
             ->where('name', $this->getRequestByKey('wallet_users.name'))
             ->first();
@@ -58,9 +55,6 @@ class WalletUserApiService extends Service
             return null;
         }
         return $this->getEntity()
-            ->with([
-                WalletEntity::Table,
-            ])
             ->where('wallet_id', $this->getRequestByKey('wallet_users.wallet_id'))
             ->where('token', $this->getRequestByKey('wallet_users.token'))
             ->first();

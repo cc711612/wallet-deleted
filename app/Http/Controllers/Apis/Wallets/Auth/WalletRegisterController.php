@@ -77,6 +77,10 @@ class WalletRegisterController extends Controller
                 'id'           => Arr::get($UserEntity, 'id'),
                 'name'         => Arr::get($UserEntity, 'name'),
                 'member_token' => Arr::get($UserEntity, 'token'),
+                'wallet'       => [
+                    'id'   => Arr::get($Wallet, 'id'),
+                    'code' => Arr::get($Wallet, 'code'),
+                ],
             ],
         ]);
     }
