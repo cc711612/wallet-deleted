@@ -5,6 +5,7 @@ use App\Http\Controllers\Apis\Auth\LogoutController;
 use App\Http\Controllers\Apis\Auth\LoginController;
 use App\Http\Controllers\Apis\Wallets\WalletController;
 use App\Http\Controllers\Apis\Wallets\WalletDetailController;
+use App\Http\Controllers\Apis\Wallets\WalletUserController;
 use App\Http\Controllers\Apis\Auth\RegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletRegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletLoginController;
@@ -23,12 +24,12 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
     # 登入相關
     Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
         Route::name("login")->post("/login", [LoginController::class, 'login']);
-        Route::name("cache")->any("/cache", [LoginController::class, 'cache']);
+        Route::name("cache")->match(['get', 'post'], "/cache", [LoginController::class, 'cache']);
         Route::name("register")->post("/register", [RegisterController::class, 'register']);
     });
     # 帳本成員
     Route::group(['as' => 'wallet.', 'prefix' => '/wallet'], function () {
-        Route::name("user")->post("/user", [WalletController::class, 'user']);
+        Route::name("user")->post("/user", [WalletUserController::class, 'index']);
         # 登入
         Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
             Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
@@ -58,6 +59,10 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
                     Route::name("show")->post("/{detail}", [WalletDetailController::class, 'show']);
                 });
                 Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);
+                # 帳本成員
+                Route::group(['as' => 'user.', 'prefix' => 'user'], function () {
+                    Route::name("destroy")->delete("/{wallet_user_id}", [WalletUserController::class, 'destroy']);
+                });
             });
         });
     });

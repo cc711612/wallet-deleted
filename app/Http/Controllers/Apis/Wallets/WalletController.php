@@ -17,8 +17,6 @@ use App\Http\Validators\Apis\Wallets\WalletStoreValidator;
 use App\Http\Requesters\Apis\Wallets\WalletUpdateRequest;
 use App\Http\Validators\Apis\Wallets\WalletUpdateValidator;
 use Illuminate\Support\Carbon;
-use App\Http\Requesters\Apis\Wallets\Details\WalletDetailUserRequest;
-use App\Http\Validators\Apis\Wallets\Details\WalletDetailUserValidator;
 
 class WalletController extends Controller
 {
@@ -158,45 +156,4 @@ class WalletController extends Controller
         ]);
     }
 
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     *
-     * @Author: Roy
-     * @DateTime: 2022/6/21 上午 01:00
-     */
-    public function user(Request $request)
-    {
-        $requester = (new WalletDetailUserRequest($request));
-
-        $Validate = (new WalletDetailUserValidator($requester))->validate();
-        if ($Validate->fails() === true) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 400,
-                'message' => $Validate->errors()->first(),
-                'data'    => [],
-            ]);
-        }
-        $Wallet = $this->wallet_api_service
-            ->setRequest($requester->toArray())
-            ->getWalletWithUserByCode();
-
-        $response = [
-            'status'  => true,
-            'code'    => 200,
-            'message' => null,
-            'data'    => [
-                'wallet' => [
-                    'users' => $Wallet->wallet_users->map(function ($User) {
-                        return [
-                            'id'       => Arr::get($User, 'id'),
-                            'name'     => Arr::get($User, 'name'),
-                            'is_admin' => Arr::get($User, 'is_admin') ? true : false,
-                        ];
-                    }),
-                ],
-            ],
-        ];
-        return response()->json($response);
-    }
 }

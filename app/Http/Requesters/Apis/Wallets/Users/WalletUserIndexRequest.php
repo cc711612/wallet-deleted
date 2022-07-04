@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requesters\Apis\Wallets\Details;
+namespace App\Http\Requesters\Apis\Wallets\Users;
 
 use App\Concerns\Databases\Request;
 use Illuminate\Support\Arr;
 
-class WalletDetailUserRequest extends Request
+class WalletUserIndexRequest extends Request
 {
     /**
      * @return null[]

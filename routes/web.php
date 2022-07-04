@@ -14,7 +14,7 @@ use App\Http\Controllers\Mains\Auth\LoginController;
 */
 
 Route::get('/', function () {
-    return redirect('https://eazysplit.usongrat.tw/#/home');
+    return redirect('https://easysplit.usongrat.tw/');
 });
 Route::group(['as' => 'auth.', 'namespace' => 'Auth', 'prefix' => 'auth'], function () {
     Route::name("login")->get("/login", [LoginController::class, 'login']);

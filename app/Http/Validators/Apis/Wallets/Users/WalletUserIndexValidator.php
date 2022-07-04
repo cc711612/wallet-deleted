@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Http\Validators\Apis\Wallets\Details;
+namespace App\Http\Validators\Apis\Wallets\Users;
 
 use App\Concerns\Commons\Abstracts\ValidatorAbstracts;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use App\Concerns\Databases\Contracts\Request;
 
 /**
- * Class WalletDetailUserValidator
+ * Class WalletUserIndexValidator
  *
- * @package App\Http\Validators\Apis\Wallets\Details
+ * @package App\Http\Validators\Apis\Wallets\Users
  * @Author: Roy
- * @DateTime: 2022/6/21 上午 01:01
+ * @DateTime: 2022/7/4 下午 05:47
  */
-class WalletDetailUserValidator extends ValidatorAbstracts
+class WalletUserIndexValidator extends ValidatorAbstracts
 {
     /**
      * @var \App\Concerns\Databases\Contracts\Request

@@ -29,7 +29,7 @@ class WalletDetailStoreRequest extends Request
             'wallet_details.value'                    => 0,
             'wallet_details.created_by'               => null,
             'wallet_details.updated_by'               => null,
-            'wallet_detail_wallet_user'               => null,
+            'wallet_detail_wallet_user'               => [],
         ];
     }
 

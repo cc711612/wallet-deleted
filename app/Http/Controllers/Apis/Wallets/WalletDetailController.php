@@ -23,6 +23,7 @@ use App\Models\Wallets\Databases\Services\WalletDetailApiService;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailShowRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailDestroyValidator;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequest;
+use App\Models\Wallets\Databases\Services\WalletUserApiService;
 
 class WalletDetailController extends Controller
 {
@@ -34,13 +35,16 @@ class WalletDetailController extends Controller
      * @var \App\Models\Wallets\Databases\Services\WalletDetailApiService
      */
     private $wallet_detail_api_service;
+    private $wallet_user_api_service;
 
     public function __construct(
         WalletApiService $WalletApiService,
-        WalletDetailApiService $WalletDetailApiService
+        WalletDetailApiService $WalletDetailApiService,
+        WalletUserApiService $WalletUserApiService
     ) {
         $this->wallet_api_service = $WalletApiService;
         $this->wallet_detail_api_service = $WalletDetailApiService;
+        $this->wallet_user_api_service = $WalletUserApiService;
     }
 
     /**
@@ -138,6 +142,22 @@ class WalletDetailController extends Controller
                 'data'    => [],
             ]);
         }
+
+        if (Arr::get($requester, 'wallet_details.type') != WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE) {
+            # 驗證users
+            $ValidateWalletUsers = $this->wallet_user_api_service
+                ->setRequest($requester->toArray())
+                ->validateWalletUsers();
+            if ($ValidateWalletUsers === false) {
+                return response()->json([
+                    'status'  => false,
+                    'code'    => 400,
+                    'message' => '分攤成員有誤',
+                    'data'    => [],
+                ]);
+            }
+        }
+
         #Create
         $Entity = $this->wallet_api_service
             ->setRequest($requester->toArray())
@@ -170,6 +190,20 @@ class WalletDetailController extends Controller
                 'message' => $Validate->errors()->first(),
                 'data'    => [],
             ]);
+        }
+        if (Arr::get($requester, 'wallet_details.type') != WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE) {
+            # 驗證users
+            $ValidateWalletUsers = $this->wallet_user_api_service
+                ->setRequest($requester->toArray())
+                ->validateWalletUsers();
+            if ($ValidateWalletUsers === false) {
+                return response()->json([
+                    'status'  => false,
+                    'code'    => 400,
+                    'message' => '分攤成員有誤',
+                    'data'    => [],
+                ]);
+            }
         }
 
         $Entity = $this->wallet_detail_api_service
