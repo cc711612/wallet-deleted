@@ -111,7 +111,7 @@ class WalletUserController extends Controller
             ->getUserWithDetail();
 
         # 驗證
-        if ($WalletUsers->created_wallet_details->isEmpty() === false) {
+        if (is_null($WalletUsers) === false && $WalletUsers->created_wallet_details->isEmpty() === false) {
             Arr::set($Response, 'message', "成員已新增細項,無法刪除");
             return response()->json($Response);
         }
