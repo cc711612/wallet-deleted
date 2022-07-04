@@ -112,6 +112,19 @@ class WalletUserApiService extends Service
 //            $UserEntity->created_wallet_details()->delete();
             return $UserEntity->update($this->getRequestByKey('wallet_users'));
         });
+    }
 
+    /**
+     * @param $wallet_id
+     *
+     * @return mixed
+     * @Author: Roy
+     * @DateTime: 2022/7/4 下午 11:20
+     */
+    public function getWalletUserByWalletId($wallet_id)
+    {
+        return $this->getEntity()
+            ->where('wallet_id', $wallet_id)
+            ->get();
     }
 }

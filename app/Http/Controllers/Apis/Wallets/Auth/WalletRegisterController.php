@@ -15,6 +15,7 @@ use function response;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
 use App\Traits\Wallets\Auth\WalletUserAuthLoginTrait;
 use App\Models\Wallets\Databases\Services\WalletApiService;
+use App\Jobs\WalletUserRegister;
 
 
 /**
@@ -65,7 +66,12 @@ class WalletRegisterController extends Controller
                 'message' => "系統錯誤",
             ]);
         }
-
+        WalletUserRegister::dispatch(
+            [
+                'wallet_user,' => $UserEntity,
+                'wallet'       => $Wallet,
+            ]
+        );
         # set cache
         $this->setMemberTokenCache($UserEntity);
 

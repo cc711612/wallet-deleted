@@ -61,9 +61,15 @@ return [
         ],
         'token' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/member/laravel.log'),
+            'path' => storage_path('logs/tokens/laravel.log'),
             'level' => 'info',
-            'days' => 30,
+            'days' => 14,
+        ],
+        'job' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/jobs/laravel.log'),
+            'level' => 'info',
+            'days' => 14,
         ],
         'error' => [
             'driver' => 'daily',
