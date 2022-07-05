@@ -188,7 +188,7 @@ class WalletController extends Controller
         # 公費
         $Public = $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE, collect([]));
         # 一般花費
-        $General = $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE, collect([]));
+        $General = $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE, collect([]));
         # 帳本成員
         $WalletUsers = $Wallet->wallet_users;
         $ExpenseDetails = $General->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
