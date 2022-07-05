@@ -17,6 +17,10 @@ use App\Http\Validators\Apis\Wallets\WalletStoreValidator;
 use App\Http\Requesters\Apis\Wallets\WalletUpdateRequest;
 use App\Http\Validators\Apis\Wallets\WalletUpdateValidator;
 use Illuminate\Support\Carbon;
+use App\Http\Requesters\Apis\Wallets\WalletCalculationRequest;
+use App\Http\Validators\Apis\Wallets\WalletCalculationValidator;
+use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
+use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
 
 class WalletController extends Controller
 {
@@ -153,6 +157,114 @@ class WalletController extends Controller
             'code'    => 200,
             'message' => [],
             'data'    => [],
+        ]);
+    }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @Author: Roy
+     * @DateTime: 2022/7/5 上午 10:15
+     */
+    public function calculation(Request $request)
+    {
+        $requester = (new WalletCalculationRequest($request));
+
+        $Validate = (new WalletCalculationValidator($requester))->validate();
+        if ($Validate->fails() === true) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => $Validate->errors()->first(),
+                'data'    => [],
+            ]);
+        }
+        $Wallet = $this->wallet_api_service
+            ->setRequest($requester->toArray())
+            ->getWalletUsersAndDetails();
+        $WalletDetailGroupByType = $Wallet->wallet_details->groupBy('type');
+        $WalletDetailGroupBySymbolOperationType = $Wallet->wallet_details->groupBy('symbol_operation_type_id');
+        # 公費
+        $Public = $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE, collect([]));
+        # 一般花費
+        $General = $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE, collect([]));
+        # 帳本成員
+        $WalletUsers = $Wallet->wallet_users;
+        $ExpenseDetails = $WalletDetailGroupBySymbolOperationType->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
+            collect([]))->toArray();
+        $UserExpenseDetails = [];
+        $WalletDetails = [];
+        $UserPayments = [];
+
+        foreach ($ExpenseDetails as $Detail) {
+            $Users = Arr::get($Detail, 'wallet_users', []);
+            $WalletDetails[Arr::get($Detail, 'id')] = [
+                'wallet_details_id' => Arr::get($Detail, 'id'),
+                'total'             => [
+                    'income'   => 0,
+                    'expenses' => Arr::get($Detail, 'value'),
+                ],
+            ];
+
+            if (count($Users) != 0) {
+                $average_expense_value = ceil(Arr::get($Detail, 'value', 0) / count($Users));
+                foreach ($Users as $User) {
+                    $UserExpenseDetails[$User['id']] [] = [
+                        'user_id'   => Arr::get($User, 'id'),
+                        'detail_id' => Arr::get($Detail, 'id'),
+                        'value'     => $average_expense_value,
+                    ];
+
+                    if (Arr::get($Detail, 'payment_wallet_user_id') == Arr::get($User, 'id')) {
+                        $UserPayments[$User['id']] [] = [
+                            'user_id'   => Arr::get($User, 'id'),
+                            'detail_id' => Arr::get($Detail, 'id'),
+                            'value'     => Arr::get($Detail, 'value'),
+                        ];
+                    }
+                    $WalletDetails[Arr::get($Detail, 'id')]['total']['income'] += $average_expense_value;
+                    $WalletDetails[Arr::get($Detail, 'id')]['users'][] = Arr::get($User, 'id');
+                }
+            }
+        }
+        return response()->json([
+            'status'  => true,
+            'code'    => 200,
+            'message' => [],
+            'data'    => [
+                'wallet' => [
+                    'id'      => Arr::get($Wallet, 'id'),
+                    'total'   => [
+                        'public'   => [
+                            'income'   => $Public->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,
+                                collect([]))->sum('value'),
+                            'expenses' => $Public->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
+                                collect([]))->sum('value'),
+                        ],
+                        'income'   => $WalletDetailGroupBySymbolOperationType->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,
+                            collect([]))->sum('value'),
+                        'expenses' => $WalletDetailGroupBySymbolOperationType->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
+                            collect([]))->sum('value'),
+                    ],
+                    'users'   => $WalletUsers->map(function ($userEntity) use ($UserExpenseDetails, $UserPayments) {
+                        $UserExpenseDetail = collect(Arr::get($UserExpenseDetails, $userEntity->id, []));
+                        $UserPayment = collect(Arr::get($UserPayments, $userEntity->id, []));
+                        $expenses = $UserExpenseDetail->sum('value');
+                        $income = $UserPayment->sum('value');
+                        return [
+                            'id'                        => Arr::get($userEntity, 'id'),
+                            'name'                      => Arr::get($userEntity, 'name'),
+                            'income'                    => $income,
+                            'expenses'                  => $expenses,
+                            'total'                     => $income - $expenses,
+                            'wallet_details_id'         => $UserExpenseDetail->pluck('detail_id'),
+                            'payment_wallet_details_id' => $UserPayment->pluck('detail_id'),
+                        ];
+                    }),
+                    'details' => array_values($WalletDetails),
+                ],
+            ],
         ]);
     }
 

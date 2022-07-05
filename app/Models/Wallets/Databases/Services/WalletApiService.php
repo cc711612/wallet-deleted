@@ -73,7 +73,7 @@ class WalletApiService extends Service
             ->with([
                 WalletDetailEntity::Table => function ($queryDetail) {
                     return $queryDetail->with([
-                        WalletUserEntity::Table
+                        WalletUserEntity::Table,
                     ]);
                 },
             ])
@@ -175,5 +175,27 @@ class WalletApiService extends Service
             }
             return $DetailEntity;
         });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     * @Author: Roy
+     * @DateTime: 2022/7/5 上午 10:34
+     */
+    public function getWalletUsersAndDetails()
+    {
+        if (is_null($this->getRequestByKey('wallets.id'))) {
+            return null;
+        }
+        return $this->getEntity()
+            ->with([
+                WalletDetailEntity::Table => function ($queryDetail) {
+                    return $queryDetail->with([
+                        WalletUserEntity::Table,
+                    ]);
+                },
+                WalletUserEntity::Table,
+            ])
+            ->find($this->getRequestByKey('wallets.id'));
     }
 }
