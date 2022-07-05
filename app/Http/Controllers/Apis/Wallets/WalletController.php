@@ -180,6 +180,7 @@ class WalletController extends Controller
                 'data'    => [],
             ]);
         }
+        # 帳本
         $Wallet = $this->wallet_api_service
             ->setRequest($requester->toArray())
             ->getWalletUsersAndDetails();
@@ -199,6 +200,7 @@ class WalletController extends Controller
 
         foreach ($ExpenseDetails as $Detail) {
             $Users = Arr::get($Detail, 'wallet_users', []);
+            # 預設值
             $WalletDetails[Arr::get($Detail, 'id')] = [
                 'wallet_details_id' => Arr::get($Detail, 'id'),
                 'total'             => [
@@ -206,8 +208,17 @@ class WalletController extends Controller
                     'expenses' => Arr::get($Detail, 'value'),
                 ],
             ];
-
+            # 代墊費
+            if (is_null(Arr::get($Detail, 'payment_wallet_user_id')) === false) {
+                $UserPayments[Arr::get($Detail, 'payment_wallet_user_id')] [] = [
+                    'user_id'   => Arr::get($Detail, 'payment_wallet_user_id'),
+                    'detail_id' => Arr::get($Detail, 'id'),
+                    'value'     => Arr::get($Detail, 'value'),
+                ];
+            }
+            # 分攤
             if (count($Users) != 0) {
+                # 均價
                 $average_expense_value = ceil(Arr::get($Detail, 'value', 0) / count($Users));
                 foreach ($Users as $User) {
                     $UserExpenseDetails[$User['id']] [] = [
@@ -215,14 +226,6 @@ class WalletController extends Controller
                         'detail_id' => Arr::get($Detail, 'id'),
                         'value'     => $average_expense_value,
                     ];
-
-                    if (Arr::get($Detail, 'payment_wallet_user_id') == Arr::get($User, 'id')) {
-                        $UserPayments[$User['id']] [] = [
-                            'user_id'   => Arr::get($User, 'id'),
-                            'detail_id' => Arr::get($Detail, 'id'),
-                            'value'     => Arr::get($Detail, 'value'),
-                        ];
-                    }
                     $WalletDetails[Arr::get($Detail, 'id')]['total']['income'] += $average_expense_value;
                     $WalletDetails[Arr::get($Detail, 'id')]['users'][] = Arr::get($User, 'id');
                 }
