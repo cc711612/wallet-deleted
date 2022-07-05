@@ -81,7 +81,7 @@ class WalletDetailController extends Controller
             ]);
         }
         $WalletDetails = $Wallet->wallet_details;
-        $WalletDetailGroupByType = $WalletDetails->groupBy('type');
+        $WalletDetailGroupBySymbolType = $WalletDetails->groupBy('symbol_operation_type_id');
         $response = [
             'status'  => true,
             'code'    => 200,
@@ -108,11 +108,9 @@ class WalletDetailController extends Controller
                         ];
                     })->toArray(),
                     'total'   => [
-                        'income'   => $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE,
-                            collect([]))->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,
+                        'income'   => $WalletDetailGroupBySymbolType->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,
                             collect([]))->sum('value'),
-                        'expenses' => $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_GENERAL_EXPENSE,
-                            collect([]))->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
+                        'expenses' => $WalletDetailGroupBySymbolType->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
                             collect([]))->sum('value'),
                     ],
                 ],
