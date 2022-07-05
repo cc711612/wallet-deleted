@@ -76,6 +76,7 @@ class WalletApiService extends Service
                         WalletUserEntity::Table,
                     ]);
                 },
+                WalletUserEntity::Table,
             ])
             ->find($this->getRequestByKey('wallets.id'));
     }

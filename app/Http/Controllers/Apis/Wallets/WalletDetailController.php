@@ -72,6 +72,7 @@ class WalletDetailController extends Controller
             ->setRequest($requester->toArray())
             ->getWalletWithDetail();
 
+
         if (is_null($Wallet)) {
             return response()->json([
                 'status'  => false,
@@ -81,6 +82,7 @@ class WalletDetailController extends Controller
             ]);
         }
         $WalletDetails = $Wallet->wallet_details;
+        $WalletUsers = $Wallet->wallet_users->pluck('id');
         $WalletDetailGroupBySymbolType = $WalletDetails->groupBy('symbol_operation_type_id');
         $response = [
             'status'  => true,
@@ -91,7 +93,14 @@ class WalletDetailController extends Controller
                     'id'      => Arr::get($Wallet, 'id'),
                     'code'    => Arr::get($Wallet, 'code'),
                     'title'   => Arr::get($Wallet, 'title'),
-                    'details' => $WalletDetails->map(function ($Detail) {
+                    'details' => $WalletDetails->map(function ($Detail) use ($WalletUsers) {
+                        $Users = $Detail->wallet_users->pluck('id')->toArray();
+                        # 公帳
+                        if (Arr::get($Detail,
+                                'type') == WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE && is_null(Arr::get($Detail,
+                                'payment_wallet_user_id')) == true) {
+                            $Users = $WalletUsers;
+                        }
                         return [
                             'id'                       => Arr::get($Detail, 'id'),
                             'type'                     => Arr::get($Detail, 'type'),
@@ -100,7 +109,7 @@ class WalletDetailController extends Controller
                             'symbol_operation_type_id' => Arr::get($Detail, 'symbol_operation_type_id'),
                             'select_all'               => Arr::get($Detail, 'select_all') ? true : false,
                             'value'                    => Arr::get($Detail, 'value', 0),
-                            'users'                    => $Detail->wallet_users->pluck('id')->toArray(),
+                            'users'                    => $Users,
                             'created_by'               => Arr::get($Detail, 'created_by'),
                             'updated_by'               => Arr::get($Detail, 'updated_by'),
                             'created_at'               => Arr::get($Detail, 'created_at')->toDateTimeString(),
