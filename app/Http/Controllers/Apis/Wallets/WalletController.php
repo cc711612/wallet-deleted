@@ -191,7 +191,7 @@ class WalletController extends Controller
         $General = $WalletDetailGroupByType->get(WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE, collect([]));
         # 帳本成員
         $WalletUsers = $Wallet->wallet_users;
-        $ExpenseDetails = $WalletDetailGroupBySymbolOperationType->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
+        $ExpenseDetails = $General->groupBy('symbol_operation_type_id')->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
             collect([]))->toArray();
         $UserExpenseDetails = [];
         $WalletDetails = [];
