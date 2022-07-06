@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call([
             InitializationSymbolOperationTypeSeeder::class,
-            InitializationWalletDetailTypeSeeder::class,
-            InitializationUserWalletSeeder::class,
+//            InitializationWalletDetailTypeSeeder::class,
+//            InitializationUserWalletSeeder::class,
         ]);
     }
 }

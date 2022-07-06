@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailIndexRequest;
 use App\Models\Wallets\Databases\Services\WalletApiService;
 use Illuminate\Support\Arr;
-use App\Traits\ApiPaginateTrait;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailStoreRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailStoreValidator;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailUpdateRequest;
@@ -22,7 +21,7 @@ use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
 use App\Models\Wallets\Databases\Services\WalletDetailApiService;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailShowRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailDestroyValidator;
-use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequest;
+use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequegst;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
 
 class WalletDetailController extends Controller
