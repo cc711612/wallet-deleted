@@ -21,7 +21,7 @@ use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
 use App\Models\Wallets\Databases\Services\WalletDetailApiService;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailShowRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailDestroyValidator;
-use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequegst;
+use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequest;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
 
 class WalletDetailController extends Controller
