@@ -15,11 +15,46 @@ use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Wallets\Auth\WalletUserAuthCacheTrait;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Arr;
 
 class WalletApiService extends Service
 {
     use WalletUserAuthCacheTrait;
 
+    /**
+     * @return string
+     * @Author: Roy
+     * @DateTime: 2022/7/10 下午 07:53
+     */
+    private function getCacheKeyFormat(): string
+    {
+        return "wallet_user.%s";
+    }
+
+    /**
+     * @param $code
+     *
+     * @return bool
+     * @Author: Roy
+     * @DateTime: 2022/7/10 下午 08:05
+     */
+    private function forgetCache($code)
+    {
+        $CacheKey = sprintf($this->getCacheKeyFormat(), $code);
+        # Cache
+
+        if (Cache::has($CacheKey) === true) {
+            return Cache::forget($CacheKey);
+        }
+        return false;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Model
+     * @Author: Roy
+     * @DateTime: 2022/7/10 下午 08:05
+     */
     protected function getEntity(): Model
     {
         // TODO: Implement getEntity() method.
@@ -88,17 +123,28 @@ class WalletApiService extends Service
      */
     public function getWalletWithUserByCode()
     {
-        return $this->getEntity()
+        $CacheKey = sprintf($this->getCacheKeyFormat(), $this->getRequestByKey('wallets.code'));
+        # Cache
+
+        if (Cache::has($CacheKey) === true) {
+            return Cache::get($CacheKey);
+        }
+        $Result = $this->getEntity()
             ->with([
                 WalletUserEntity::Table,
             ])
             ->where('code', $this->getRequestByKey('wallets.code'))
             ->first();
+
+        Cache::add($CacheKey, $Result);
+        return $Result;
     }
 
     /**
+     * @return mixed
+     * @throws \Throwable
      * @Author: Roy
-     * @DateTime: 2022/6/21 上午 02:21
+     * @DateTime: 2022/7/10 下午 09:42
      */
     public function createWalletWithUser()
     {
@@ -113,8 +159,9 @@ class WalletApiService extends Service
 
     /**
      * @return mixed
+     * @throws \Throwable
      * @Author: Roy
-     * @DateTime: 2022/6/21 下午 03:26
+     * @DateTime: 2022/7/10 下午 09:42
      */
     public function createWalletUserById()
     {
@@ -125,7 +172,7 @@ class WalletApiService extends Service
             if (is_null($Entity)) {
                 return null;
             }
-
+            $this->forgetCache(Arr::get($Entity, 'code'));
             return $Entity->wallet_users()->create($this->getRequestByKey('wallet_users'));
         });
     }
@@ -133,7 +180,7 @@ class WalletApiService extends Service
     /**
      * @return null
      * @Author: Roy
-     * @DateTime: 2022/6/21 下午 03:50
+     * @DateTime: 2022/7/10 下午 09:42
      */
     public function getWalletByCode()
     {
