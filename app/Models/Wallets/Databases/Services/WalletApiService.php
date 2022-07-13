@@ -136,7 +136,7 @@ class WalletApiService extends Service
             ->where('code', $this->getRequestByKey('wallets.code'))
             ->first();
 
-        Cache::add($CacheKey, $Result);
+        Cache::add($CacheKey, $Result,604800);
         return $Result;
     }
 
