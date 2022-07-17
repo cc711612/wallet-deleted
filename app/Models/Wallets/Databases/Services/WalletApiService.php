@@ -27,7 +27,7 @@ class WalletApiService extends Service
      * @Author: Roy
      * @DateTime: 2022/7/10 下午 07:53
      */
-    private function getCacheKeyFormat(): string
+    public function getCacheKeyFormat(): string
     {
         return "wallet_user.%s";
     }
@@ -39,7 +39,7 @@ class WalletApiService extends Service
      * @Author: Roy
      * @DateTime: 2022/7/10 下午 08:05
      */
-    private function forgetCache($code)
+    public function forgetCache($code)
     {
         $CacheKey = sprintf($this->getCacheKeyFormat(), $code);
         # Cache
@@ -50,6 +50,33 @@ class WalletApiService extends Service
         return false;
     }
 
+    /**
+     * @return string
+     * @Author: Roy
+     * @DateTime: 2022/7/17 下午 01:28
+     */
+    public function getDetailCacheKeyFormat(): string
+    {
+        return "wallet.details.%s";
+    }
+
+    /**
+     * @param $code
+     *
+     * @return bool
+     * @Author: Roy
+     * @DateTime: 2022/7/10 下午 08:05
+     */
+    public function forgetDetailCache($id)
+    {
+        $CacheKey = sprintf($this->getDetailCacheKeyFormat(), $id);
+        # Cache
+
+        if (Cache::has($CacheKey) === true) {
+            return Cache::forget($CacheKey);
+        }
+        return false;
+    }
     /**
      * @return \Illuminate\Database\Eloquent\Model
      * @Author: Roy
@@ -104,7 +131,13 @@ class WalletApiService extends Service
         if (is_null($this->getRequestByKey('wallets.id'))) {
             return null;
         }
-        return $this->getEntity()
+        $CacheKey = sprintf($this->getDetailCacheKeyFormat(), $this->getRequestByKey('wallets.id'));
+        # Cache
+        if (Cache::has($CacheKey) === true) {
+            return Cache::get($CacheKey);
+        }
+
+        $Result = $this->getEntity()
             ->with([
                 WalletDetailEntity::Table => function ($queryDetail) {
                     return $queryDetail->with([
@@ -114,6 +147,10 @@ class WalletApiService extends Service
                 WalletUserEntity::Table,
             ])
             ->find($this->getRequestByKey('wallets.id'));
+
+        Cache::add($CacheKey, $Result,604800);
+
+        return $Result;
     }
 
     /**

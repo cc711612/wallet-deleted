@@ -6,6 +6,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Models\Wallets\Databases\Entities\WalletEntity;
+use App\Observers\WalletUserObserver;
+use App\Models\Wallets\Databases\Entities\WalletUserEntity;
+use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
+use App\Observers\WalletDetailObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -28,5 +33,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+//        WalletUserEntity::observe(WalletUserObserver::class);
+        WalletDetailEntity::observe(WalletDetailObserver::class);
     }
 }
