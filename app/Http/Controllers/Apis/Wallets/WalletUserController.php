@@ -68,7 +68,7 @@ class WalletUserController extends Controller
         $response = [
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'wallet' => [
                     'users' => $Wallet->wallet_users->map(function ($User) {

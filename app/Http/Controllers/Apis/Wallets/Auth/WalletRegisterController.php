@@ -78,7 +78,7 @@ class WalletRegisterController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'id'           => Arr::get($UserEntity, 'id'),
                 'name'         => Arr::get($UserEntity, 'name'),

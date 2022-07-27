@@ -64,7 +64,7 @@ class LoginController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'id'           => Arr::get(Auth::user(), 'id'),
                 'name'         => Arr::get(Auth::user(), 'name'),
@@ -89,7 +89,7 @@ class LoginController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [],
         ]);
     }

@@ -86,7 +86,7 @@ class WalletDetailController extends Controller
         $response = [
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'wallet' => [
                     'id'      => Arr::get($Wallet, 'id'),
@@ -172,7 +172,7 @@ class WalletDetailController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [],
         ]);
     }
@@ -219,7 +219,7 @@ class WalletDetailController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [],
         ]);
     }
@@ -255,7 +255,7 @@ class WalletDetailController extends Controller
         $response = [
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'wallet' => [
                     'id'            => Arr::get($requester, 'wallets.id'),
@@ -324,7 +324,7 @@ class WalletDetailController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [],
         ]);
     }

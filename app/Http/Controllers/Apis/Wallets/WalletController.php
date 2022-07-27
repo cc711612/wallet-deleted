@@ -58,7 +58,7 @@ class WalletController extends Controller
         $response = [
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'paginate' => $this->handleApiPageInfo($Wallets),
                 'wallets'  => $Wallets->getCollection()->map(function ($wallet) {
@@ -110,7 +110,7 @@ class WalletController extends Controller
             return response()->json([
                 'status'  => true,
                 'code'    => 200,
-                'message' => [],
+                'message' => null,
                 'data'    => [
                     'wallet' => [
                         'id'         => Arr::get($Entity, 'id'),
@@ -157,7 +157,7 @@ class WalletController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [],
         ]);
     }
@@ -236,7 +236,7 @@ class WalletController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [
                 'wallet' => [
                     'id'      => Arr::get($Wallet, 'id'),

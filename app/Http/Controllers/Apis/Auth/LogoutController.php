@@ -36,7 +36,7 @@ class LogoutController extends Controller
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => [],
+            'message' => null,
             'data'    => [],
         ]);
     }
