@@ -41,7 +41,9 @@ class WalletDetailUpdateValidator extends ValidatorAbstracts
         return [
             'wallets.id'                              => [
                 'required',
-                'exists:wallets,id',
+                Rule::exists('wallets','id')->where(function ($query){
+                    return $query->where('status',1);
+                }),
             ],
             'wallet_users.id'                         => [
                 'required',
