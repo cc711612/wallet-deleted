@@ -66,11 +66,13 @@ class WalletController extends Controller
                         'id'         => Arr::get($wallet, 'id'),
                         'title'      => Arr::get($wallet, 'title'),
                         'code'       => Arr::get($wallet, 'code'),
+                        'status'     => Arr::get($wallet, 'status'),
                         'user'       => [
                             'id'   => Arr::get($wallet, 'users.id'),
                             'name' => Arr::get($wallet, 'users.name'),
                         ],
                         'updated_at' => Arr::get($wallet, 'updated_at')->format('Y-m-d H:i:s'),
+                        'created_at' => Arr::get($wallet, 'created_at')->format('Y-m-d H:i:s'),
                     ];
                 }),
             ],

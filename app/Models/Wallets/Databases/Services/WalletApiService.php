@@ -77,6 +77,7 @@ class WalletApiService extends Service
         }
         return false;
     }
+
     /**
      * @return \Illuminate\Database\Eloquent\Model
      * @Author: Roy
@@ -113,7 +114,7 @@ class WalletApiService extends Service
                 },
             ])
             ->where('user_id', $this->getRequestByKey('users.id'))
-            ->select(['id', 'user_id', 'title', 'code', 'status', 'updated_at']);
+            ->select(['id', 'user_id', 'title', 'code', 'status', 'updated_at', 'created_at']);
 
         return $Result
             ->where('status', 1)
@@ -148,7 +149,7 @@ class WalletApiService extends Service
             ])
             ->find($this->getRequestByKey('wallets.id'));
 
-        Cache::add($CacheKey, $Result,604800);
+        Cache::add($CacheKey, $Result, 604800);
 
         return $Result;
     }
@@ -173,7 +174,7 @@ class WalletApiService extends Service
             ->where('code', $this->getRequestByKey('wallets.code'))
             ->first();
 
-        Cache::add($CacheKey, $Result,604800);
+        Cache::add($CacheKey, $Result, 604800);
         return $Result;
     }
 
