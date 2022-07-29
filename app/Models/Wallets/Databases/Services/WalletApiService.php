@@ -117,7 +117,7 @@ class WalletApiService extends Service
             ->select(['id', 'user_id', 'title', 'code', 'status', 'updated_at', 'created_at']);
 
         return $Result
-            ->where('status', 1)
+//            ->where('status', 1)
             ->orderByDesc('updated_at')
             ->paginate($page_count);
     }
