@@ -23,6 +23,8 @@ use App\Http\Requesters\Apis\Wallets\Details\WalletDetailShowRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailDestroyValidator;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequest;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
+use App\Http\Requesters\Apis\Wallets\Details\WalletDetailCheckoutRequest;
+use App\Http\Validators\Apis\Wallets\Details\WalletDetailCheckoutValidator;
 
 class WalletDetailController extends Controller
 {
@@ -109,10 +111,12 @@ class WalletDetailController extends Controller
                             'select_all'               => Arr::get($Detail, 'select_all') ? true : false,
                             'value'                    => Arr::get($Detail, 'value', 0),
                             'users'                    => $Users,
+                            'checkout_by'              => Arr::get($Detail, 'checkout_by'),
                             'created_by'               => Arr::get($Detail, 'created_by'),
                             'updated_by'               => Arr::get($Detail, 'updated_by'),
                             'created_at'               => Arr::get($Detail, 'created_at')->toDateTimeString(),
                             'updated_at'               => Arr::get($Detail, 'updated_at')->toDateTimeString(),
+                            'checkout_at'              => Arr::get($Detail, 'checkout_at'),
                         ];
                     })->toArray(),
                     'total'   => [
@@ -232,12 +236,7 @@ class WalletDetailController extends Controller
      */
     public function show(Request $request)
     {
-        $Response = [
-            'status'  => false,
-            'code'    => 403,
-            'message' => '認證錯誤',
-            'data'    => [],
-        ];
+        $Response = $this->getDefaultResponse();
 
         $requester = (new WalletDetailShowRequest($request));
 
@@ -268,8 +267,10 @@ class WalletDetailController extends Controller
                         'select_all'               => Arr::get($Detail, 'select_all'),
                         'value'                    => Arr::get($Detail, 'value'),
                         'created_by'               => Arr::get($Detail, 'created_by'),
+                        'checkout_by'              => Arr::get($Detail, 'checkout_by'),
                         'updated_by'               => Arr::get($Detail, 'updated_by'),
                         'updated_at'               => Arr::get($Detail, 'updated_at')->toDateTimeString(),
+                        'checkout_at'              => Arr::get($Detail, 'checkout_at'),
                         'users'                    => Arr::get($Detail, 'wallet_users',
                             collect([]))->pluck('id')->toArray(),
                     ],
@@ -288,12 +289,7 @@ class WalletDetailController extends Controller
      */
     public function destroy(Request $request)
     {
-        $Response = [
-            'status'  => false,
-            'code'    => 403,
-            'message' => '認證錯誤',
-            'data'    => [],
-        ];
+        $Response = $this->getDefaultResponse();
 
         $requester = (new WalletDetailDestroyRequest($request));
 
@@ -327,5 +323,60 @@ class WalletDetailController extends Controller
             'message' => null,
             'data'    => [],
         ]);
+    }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @Author: Roy
+     * @DateTime: 2022/7/30 下午 07:20
+     */
+    public function checkout(Request $request)
+    {
+        $Response = $this->getDefaultResponse();
+
+        $requester = (new WalletDetailCheckoutRequest($request));
+
+        $Validate = (new WalletDetailCheckoutValidator($requester))->validate();
+        if ($Validate->fails() === true) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => $Validate->errors()->first(),
+                'data'    => [],
+            ]);
+        }
+
+        try {
+            $this->wallet_detail_api_service
+                ->setRequest($requester->toArray())
+                ->checkoutWalletDetails();
+            $Response = [
+                'status'  => true,
+                'code'    => 200,
+                'message' => null,
+                'data'    => [],
+            ];
+        } catch (\Exception $exception) {
+            Arr::set($Response, 'message', json_encode($exception));
+        }
+
+        return response()->json($Response);
+    }
+
+    /**
+     * @return array
+     * @Author: Roy
+     * @DateTime: 2022/7/30 下午 07:04
+     */
+    private function getDefaultResponse(): array
+    {
+        return [
+            'status'  => false,
+            'code'    => 403,
+            'message' => '認證錯誤',
+            'data'    => [],
+        ];
     }
 }

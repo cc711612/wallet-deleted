@@ -74,4 +74,17 @@ class WalletDetailApiService extends Service
             ->where('wallet_id', $this->getRequestByKey('wallets.id'))
             ->find($this->getRequestByKey('wallet_details.id'));
     }
+
+    /**
+     * @return bool
+     * @Author: Roy
+     * @DateTime: 2022/7/30 下午 07:17
+     */
+    public function checkoutWalletDetails(): bool
+    {
+        return $this->getEntity()
+            ->where('wallet_id', $this->getRequestByKey('wallets.id'))
+            ->whereIn('id', $this->getRequestByKey('checkout.ids'))
+            ->update($this->getRequestByKey('wallet_details'));
+    }
 }
