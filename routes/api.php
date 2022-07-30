@@ -58,6 +58,7 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
                     Route::name("index")->post("/list", [WalletDetailController::class, 'index']);
                     Route::name("show")->post("/{detail}", [WalletDetailController::class, 'show']);
                     Route::name("checkout")->put("/checkout", [WalletDetailController::class, 'checkout']);
+                    Route::name("uncheckout")->put("/undo_checkout", [WalletDetailController::class, 'uncheckout']);
                 });
                 Route::name("calculation")->post("/calculation", [WalletController::class, 'calculation']);
                 Route::resource('detail', WalletDetailController::class)->only(['store', 'update', 'destroy']);

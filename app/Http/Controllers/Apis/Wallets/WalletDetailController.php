@@ -25,6 +25,8 @@ use App\Http\Requesters\Apis\Wallets\Details\WalletDetailDestroyRequest;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
 use App\Http\Requesters\Apis\Wallets\Details\WalletDetailCheckoutRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailCheckoutValidator;
+use App\Http\Requesters\Apis\Wallets\Details\WalletDetailUncheckoutRequest;
+use App\Http\Validators\Apis\Wallets\Details\WalletDetailUncheckoutValidator;
 
 class WalletDetailController extends Controller
 {
@@ -349,9 +351,11 @@ class WalletDetailController extends Controller
         }
 
         try {
+
             $this->wallet_detail_api_service
                 ->setRequest($requester->toArray())
                 ->checkoutWalletDetails();
+
             $Response = [
                 'status'  => true,
                 'code'    => 200,
@@ -365,6 +369,46 @@ class WalletDetailController extends Controller
         return response()->json($Response);
     }
 
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @Author: Roy
+     * @DateTime: 2022/7/30 下午 07:26
+     */
+    public function unCheckout(Request $request)
+    {
+        $Response = $this->getDefaultResponse();
+        $requester = (new WalletDetailUncheckoutRequest($request));
+
+        $Validate = (new WalletDetailUncheckoutValidator($requester))->validate();
+        if ($Validate->fails() === true) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 400,
+                'message' => $Validate->errors()->first(),
+                'data'    => [],
+            ]);
+        }
+
+        try {
+
+            $this->wallet_detail_api_service
+                ->setRequest($requester->toArray())
+                ->unCheckoutWalletDetails();
+
+            $Response = [
+                'status'  => true,
+                'code'    => 200,
+                'message' => null,
+                'data'    => [],
+            ];
+        } catch (\Exception $exception) {
+            Arr::set($Response, 'message', json_encode($exception));
+        }
+
+        return response()->json($Response);
+    }
     /**
      * @return array
      * @Author: Roy
