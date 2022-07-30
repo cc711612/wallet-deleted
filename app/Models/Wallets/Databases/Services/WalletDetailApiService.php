@@ -8,14 +8,15 @@ namespace App\Models\Wallets\Databases\Services;
 
 use App\Concerns\Databases\Service;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Wallets\Databases\Entities\WalletEntity;
 use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use Illuminate\Support\Facades\DB;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
-use Illuminate\Support\Arr;
+use App\Traits\Caches\CacheTrait;
 
 class WalletDetailApiService extends Service
 {
+    use CacheTrait;
+
     protected function getEntity(): Model
     {
         // TODO: Implement getEntity() method.
@@ -82,6 +83,7 @@ class WalletDetailApiService extends Service
      */
     public function checkoutWalletDetails(): bool
     {
+        $this->forgetDetailCache($this->getRequestByKey('wallets.id'));
         return $this->getEntity()
             ->where('wallet_id', $this->getRequestByKey('wallets.id'))
             ->whereIn('id', $this->getRequestByKey('checkout.ids'))
@@ -95,9 +97,10 @@ class WalletDetailApiService extends Service
      */
     public function unCheckoutWalletDetails(): bool
     {
+        $this->forgetDetailCache($this->getRequestByKey('wallets.id'));
         return $this->getEntity()
             ->where('wallet_id', $this->getRequestByKey('wallets.id'))
-            ->where('checkout_at',$this->getRequestByKey('checkout_at'))
+            ->where('checkout_at', $this->getRequestByKey('checkout_at'))
             ->update($this->getRequestByKey('wallet_details'));
     }
 }

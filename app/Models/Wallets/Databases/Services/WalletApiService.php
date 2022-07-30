@@ -17,66 +17,11 @@ use App\Traits\Wallets\Auth\WalletUserAuthCacheTrait;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Arr;
+use App\Traits\Caches\CacheTrait;
 
 class WalletApiService extends Service
 {
-    use WalletUserAuthCacheTrait;
-
-    /**
-     * @return string
-     * @Author: Roy
-     * @DateTime: 2022/7/10 下午 07:53
-     */
-    public function getCacheKeyFormat(): string
-    {
-        return "wallet_user.%s";
-    }
-
-    /**
-     * @param $code
-     *
-     * @return bool
-     * @Author: Roy
-     * @DateTime: 2022/7/10 下午 08:05
-     */
-    public function forgetCache($code)
-    {
-        $CacheKey = sprintf($this->getCacheKeyFormat(), $code);
-        # Cache
-
-        if (Cache::has($CacheKey) === true) {
-            return Cache::forget($CacheKey);
-        }
-        return false;
-    }
-
-    /**
-     * @return string
-     * @Author: Roy
-     * @DateTime: 2022/7/17 下午 01:28
-     */
-    public function getDetailCacheKeyFormat(): string
-    {
-        return "wallet.details.%s";
-    }
-
-    /**
-     * @param $code
-     *
-     * @return bool
-     * @Author: Roy
-     * @DateTime: 2022/7/10 下午 08:05
-     */
-    public function forgetDetailCache($id)
-    {
-        $CacheKey = sprintf($this->getDetailCacheKeyFormat(), $id);
-        # Cache
-
-        if (Cache::has($CacheKey) === true) {
-            return Cache::forget($CacheKey);
-        }
-        return false;
-    }
+    use WalletUserAuthCacheTrait, CacheTrait;
 
     /**
      * @return \Illuminate\Database\Eloquent\Model
