@@ -16,10 +16,12 @@ use App\Http\Validators\Apis\Wallets\Users\WalletUserIndexValidator;
 use App\Http\Requesters\Apis\Wallets\Users\WalletUserDestroyRequest;
 use App\Http\Validators\Apis\Wallets\Users\WalletUserDestroyValidator;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
+use App\Traits\ResponseTrait;
+use App\Http\Resources\WalletUserResource;
 
 class WalletUserController extends Controller
 {
-    use ApiPaginateTrait;
+    use ApiPaginateTrait, ResponseTrait;
 
     /**
      * @var \App\Models\Wallets\Databases\Services\WalletApiService
@@ -30,13 +32,13 @@ class WalletUserController extends Controller
      */
     private $wallet_user_api_service;
 
+
     /**
      * @param  \App\Models\Wallets\Databases\Services\WalletApiService  $WalletApiService
      */
     public function __construct(
         WalletApiService $WalletApiService,
         WalletUserApiService $WalletUserApiService
-
     ) {
         $this->wallet_api_service = $WalletApiService;
         $this->wallet_user_api_service = $WalletUserApiService;
@@ -45,8 +47,9 @@ class WalletUserController extends Controller
     /**
      * @param  \Illuminate\Http\Request  $request
      *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource|\Illuminate\Support\HigherOrderTapProxy|void
      * @Author: Roy
-     * @DateTime: 2022/6/21 上午 01:00
+     * @DateTime: 2022/7/31 下午 02:03
      */
     public function index(Request $request)
     {
@@ -54,57 +57,30 @@ class WalletUserController extends Controller
 
         $Validate = (new WalletUserIndexValidator($requester))->validate();
         if ($Validate->fails() === true) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 400,
-                'message' => $Validate->errors()->first(),
-                'data'    => [],
-            ]);
+            return $this->response()->errorBadRequest($Validate->errors()->first());
         }
+
         $Wallet = $this->wallet_api_service
             ->setRequest($requester->toArray())
             ->getWalletWithUserByCode();
 
-        $response = [
-            'status'  => true,
-            'code'    => 200,
-            'message' => null,
-            'data'    => [
-                'wallet' => [
-                    'users' => $Wallet->wallet_users->map(function ($User) {
-                        return [
-                            'id'       => Arr::get($User, 'id'),
-                            'name'     => Arr::get($User, 'name'),
-                            'is_admin' => Arr::get($User, 'is_admin') ? true : false,
-                        ];
-                    }),
-                ],
-            ],
-        ];
-        return response()->json($response);
+        return $this->response()->success((new WalletUserResource($Wallet))->index());
     }
 
     /**
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource|\Illuminate\Support\HigherOrderTapProxy|void
      * @Author: Roy
-     * @DateTime: 2022/7/4 下午 06:41
+     * @DateTime: 2022/7/31 下午 02:03
      */
     public function destroy(Request $request)
     {
-        $Response = [
-            'status'  => false,
-            'code'    => 400,
-            'message' => '系統有誤',
-            'data'    => [],
-        ];
         $requester = (new WalletUserDestroyRequest($request));
 
         $Validate = (new WalletUserDestroyValidator($requester))->validate();
         if ($Validate->fails() === true) {
-            Arr::set($Response, 'message', $Validate->errors()->first());
-            return response()->json($Response);
+            return $this->response()->errorBadRequest($Validate->errors()->first());
         }
         $WalletUsers = $this->wallet_user_api_service
             ->setRequest($requester->toArray())
@@ -112,19 +88,16 @@ class WalletUserController extends Controller
 
         # 驗證
         if (is_null($WalletUsers) === false && $WalletUsers->created_wallet_details->isEmpty() === false) {
-            Arr::set($Response, 'message', "成員已新增細項,無法刪除");
-            return response()->json($Response);
+            return $this->response()->errorBadRequest("成員已新增細項,無法刪除");
         }
         try {
             $this->wallet_user_api_service
                 ->setRequest($requester->toArray())
                 ->delete();
-            Arr::set($Response, 'message', null);
-            Arr::set($Response, 'status', true);
-            Arr::set($Response, 'code', 200);
         } catch (\Exception $e) {
-            Arr::set($Response, 'message', $e);
+            return $this->response()->fail($e);
         }
-        return response()->json($Response);
+
+        return $this->response()->success();
     }
 }
