@@ -6,23 +6,18 @@
 
 namespace App\Http\Controllers\Apis\Wallets;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Models\Wallets\Databases\Services\WalletApiService;
-use Illuminate\Support\Arr;
-use App\Traits\ApiPaginateTrait;
 use App\Http\Requesters\Apis\Wallets\Users\WalletUserIndexRequest;
 use App\Http\Validators\Apis\Wallets\Users\WalletUserIndexValidator;
 use App\Http\Requesters\Apis\Wallets\Users\WalletUserDestroyRequest;
 use App\Http\Validators\Apis\Wallets\Users\WalletUserDestroyValidator;
 use App\Models\Wallets\Databases\Services\WalletUserApiService;
-use App\Traits\ResponseTrait;
 use App\Http\Resources\WalletUserResource;
+use App\Http\Controllers\ApiController;
 
-class WalletUserController extends Controller
+class WalletUserController extends ApiController
 {
-    use ApiPaginateTrait, ResponseTrait;
-
     /**
      * @var \App\Models\Wallets\Databases\Services\WalletApiService
      */

@@ -11,9 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 use App\Models\Wallets\Databases\Entities\WalletEntity;
 use Illuminate\Support\Facades\DB;
+use App\Traits\Caches\CacheTrait;
+use Illuminate\Support\Arr;
 
 class WalletUserApiService extends Service
 {
+    use CacheTrait;
+
     /**
      * @return \Illuminate\Database\Eloquent\Model
      * @Author: Roy
@@ -102,14 +106,14 @@ class WalletUserApiService extends Service
     {
         return DB::transaction(function () {
             $UserEntity = $this->getEntity()
+                ->with([WalletEntity::Table])
                 ->find($this->getRequestByKey('wallet_users.id'));
 
             if (is_null($UserEntity)) {
                 return null;
             }
 
-//            $UserEntity->wallet_details()->delete();
-//            $UserEntity->created_wallet_details()->delete();
+            $this->forgetCache(Arr::get($UserEntity, 'wallets.code'));
             return $UserEntity->update($this->getRequestByKey('wallet_users'));
         });
     }
