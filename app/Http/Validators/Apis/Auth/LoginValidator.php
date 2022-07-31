@@ -64,7 +64,7 @@ class LoginValidator extends ValidatorAbstracts
         return [
             'password.required' => 'password 為必填',
             'password.max'      => 'password 至多18字元',
-            'password.min'      => 'password 至多6字元',
+            'password.min'      => 'password 至少6字元',
             'account.required'  => 'account 為必填',
             'account.exists'    => 'account not exist',
         ];

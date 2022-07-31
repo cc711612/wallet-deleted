@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\Apis\Auth;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Traits\AuthLogoutTrait;
 use Illuminate\Support\Arr;
+use App\Http\Controllers\ApiController;
 
 /**
  * Class LogoutController
@@ -18,7 +18,7 @@ use Illuminate\Support\Arr;
  * @Author: Roy
  * @DateTime: 2022/6/19 下午 02:54
  */
-class LogoutController extends Controller
+class LogoutController extends ApiController
 {
     use AuthLogoutTrait;
 
@@ -33,11 +33,6 @@ class LogoutController extends Controller
         # clean cache
         $this->cleanToken(Arr::get($request, 'user.token'));
 
-        return response()->json([
-            'status'  => true,
-            'code'    => 200,
-            'message' => null,
-            'data'    => [],
-        ]);
+        return $this->response()->success();
     }
 }

@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Apis\Auth;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Traits\AuthLoginTrait;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +13,8 @@ use Illuminate\Support\Arr;
 use App\Http\Requesters\Apis\Auth\RegisterRequest;
 use App\Http\Validators\Apis\Auth\RegisterValidator;
 use App\Models\Users\Databases\Services\UserApiService;
+use App\Http\Controllers\ApiController;
+use App\Http\Resources\AuthResource;
 
 /**
  * Class RegisterController
@@ -22,7 +23,7 @@ use App\Models\Users\Databases\Services\UserApiService;
  * @Author: Roy
  * @DateTime: 2022/6/21 上午 11:11
  */
-class RegisterController extends Controller
+class RegisterController extends ApiController
 {
     use AuthLoginTrait;
 
@@ -39,46 +40,28 @@ class RegisterController extends Controller
 
         $Validate = (new RegisterValidator($requester))->validate();
         if ($Validate->fails() === true) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 400,
-                'message' => $Validate->errors()->first(),
-            ]);
+            return $this->response()->errorBadRequest($Validate->errors()->first());
         }
+
         $UserEntity = (new UserApiService())
-//            ->setRequest($requester->toArray())
             ->create(Arr::get($requester, 'users'));
 
         if (is_null($UserEntity)) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 400,
-                'message' => $Validate->errors()->first(),
-            ]);
+            return $this->response()->fail('新增失敗');
         }
 
         $credentials = request(['account', 'password']);
 
         #認證失敗
         if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'status'  => false,
-                'code'    => 400,
-                'message' => "密碼有誤",
-            ]);
+            return $this->response()->errorBadRequest("註冊登入失敗");
         }
         # set cache
         $this->MemberTokenCache();
 
-        return response()->json([
-            'status'  => true,
-            'code'    => 200,
-            'message' => null,
-            'data'    => [
-                'id'           => Arr::get(Auth::user(), 'id'),
-                'name'         => Arr::get(Auth::user(), 'name'),
-                'member_token' => Arr::get(Auth::user(), 'token'),
-            ],
-        ]);
+        return $this->response()->success(
+            (new AuthResource(Auth::user()))
+                ->login()
+        );
     }
 }
