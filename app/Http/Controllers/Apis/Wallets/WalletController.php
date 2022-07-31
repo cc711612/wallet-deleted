@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use App\Http\Requesters\Apis\Wallets\WalletIndexRequest;
 use App\Models\Wallets\Databases\Services\WalletApiService;
 use Illuminate\Support\Arr;
-use App\Traits\ApiPaginateTrait;
 use App\Http\Requesters\Apis\Wallets\WalletStoreRequest;
 use App\Http\Validators\Apis\Wallets\WalletStoreValidator;
 use App\Http\Requesters\Apis\Wallets\WalletUpdateRequest;

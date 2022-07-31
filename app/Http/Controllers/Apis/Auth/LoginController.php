@@ -11,7 +11,6 @@ use App\Traits\AuthLoginTrait;
 use App\Http\Requesters\Apis\Auth\LoginRequest;
 use App\Http\Validators\Apis\Auth\LoginValidator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\AuthResource;
 
