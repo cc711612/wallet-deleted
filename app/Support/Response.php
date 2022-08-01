@@ -31,9 +31,11 @@ class Response
         return $response;
     }
 
-    public function errorBadRequest(?string $message = '')
+    public function errorBadRequest(string $message = '')
     {
-        $this->fail($message, HttpResponse::HTTP_OK);
+
+        return $this->formatArrayResponse(null, $message, HttpResponse::HTTP_BAD_REQUEST);
+//        $this->fail($message, HttpResponse::HTTP_BAD_REQUEST);
     }
 
     public function errorForbidden(string $message = '')
@@ -120,7 +122,11 @@ class Response
      */
     protected function formatArrayResponse($data, string $message = '', $code = HttpResponse::HTTP_OK, array $headers = [], $option = 0)
     {
-        return response()->json($this->formatData($data, $message, $code), $code, $headers, $option);
+        $status_code = $code;
+        if(in_array($status_code,[HttpResponse::HTTP_BAD_REQUEST])){
+            $status_code = HttpResponse::HTTP_OK;
+        }
+        return response()->json($this->formatData($data, $message, $code), $status_code, $headers, $option);
     }
 
     /**
