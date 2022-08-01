@@ -33,7 +33,7 @@ class Response
 
     public function errorBadRequest(?string $message = '')
     {
-        $this->fail($message, HttpResponse::HTTP_BAD_REQUEST);
+        $this->fail($message, HttpResponse::HTTP_OK);
     }
 
     public function errorForbidden(string $message = '')
