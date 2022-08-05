@@ -150,7 +150,7 @@ class WalletDetailController extends ApiController
             }
         }
         try {
-            $this->wallet_api_service
+            $this->wallet_detail_api_service
                 ->setRequest($requester->toArray())
                 ->updateWalletDetail();
         } catch (\Exception $exception) {

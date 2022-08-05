@@ -34,7 +34,7 @@ class WalletDetailApiService extends Service
      */
     public function updateWalletDetail()
     {
-        if (is_null($this->getRequestByKey('wallets.id'))) {
+        if (is_null($this->getRequestByKey('wallet_details.id'))) {
             return null;
         }
 
