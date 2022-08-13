@@ -19,7 +19,7 @@ class InitializationWalletUsers extends Migration
             $table->unsignedBigInteger('user_id')->nullable()->comment('users id');
             $table->string('name')->nullable();
             $table->string('token')->nullable();
-            $table->smallInteger('is_admin')->nullable()->comment('管理員 1 yes : 0 no');
+            $table->smallInteger('is_admin')->default(0)->comment('管理員 1 yes : 0 no');
             $table->timestamps();
             $table->softDeletes();
             // 建立索引鍵
