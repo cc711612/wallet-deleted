@@ -11,6 +11,7 @@ use App\Observers\WalletUserObserver;
 use App\Models\Wallets\Databases\Entities\WalletUserEntity;
 use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use App\Observers\WalletDetailObserver;
+use App\Observers\WalletObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -35,5 +36,6 @@ class EventServiceProvider extends ServiceProvider
         //
 //        WalletUserEntity::observe(WalletUserObserver::class);
         WalletDetailEntity::observe(WalletDetailObserver::class);
+        WalletEntity::observe(WalletObserver::class);
     }
 }
