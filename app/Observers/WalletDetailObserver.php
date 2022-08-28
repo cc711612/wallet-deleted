@@ -39,7 +39,7 @@ class WalletDetailObserver
     {
         $this->wallet_api_service->update(
             $WalletDetailEntity->wallet_id,
-            ['updated_at' => Carbon::now()->toDateString()]
+            ['updated_at' => Carbon::now()->toDateTimeString()]
         );
         return $this->wallet_api_service->forgetDetailCache($WalletDetailEntity->wallet_id);
     }
@@ -56,7 +56,7 @@ class WalletDetailObserver
         //
         $this->wallet_api_service->update(
             $WalletDetailEntity->wallet_id,
-            ['updated_at' => Carbon::now()->toDateString()]
+            ['updated_at' => Carbon::now()->toDateTimeString()]
         );
         return $this->wallet_api_service->forgetDetailCache($WalletDetailEntity->wallet_id);
     }

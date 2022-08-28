@@ -56,7 +56,7 @@ class WalletUserObserver
         //
         return $this->wallet_api_service->update(
             $WalletUserEntity->wallet_id,
-            ['updated_at' => Carbon::now()->toDateString()]
+            ['updated_at' => Carbon::now()->toDateTimeString()]
         );
     }
 
@@ -72,7 +72,7 @@ class WalletUserObserver
         //
         $this->wallet_api_service->update(
             $WalletUserEntity->wallet_id,
-            ['updated_at' => Carbon::now()->toDateString()]
+            ['updated_at' => Carbon::now()->toDateTimeString()]
         );
     }
 
