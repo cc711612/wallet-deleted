@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use App\Models\Wallets\Databases\Services\WalletApiService;
+use Illuminate\Support\Carbon;
 
 /**
  * Class WalletDetailObserver
@@ -36,6 +37,10 @@ class WalletDetailObserver
      */
     public function created(WalletDetailEntity $WalletDetailEntity)
     {
+        $this->wallet_api_service->update(
+            $WalletDetailEntity->wallet_id,
+            ['updated_at' => Carbon::now()->toDateString()]
+        );
         return $this->wallet_api_service->forgetDetailCache($WalletDetailEntity->wallet_id);
     }
 
@@ -49,6 +54,10 @@ class WalletDetailObserver
     public function updated(WalletDetailEntity $WalletDetailEntity)
     {
         //
+        $this->wallet_api_service->update(
+            $WalletDetailEntity->wallet_id,
+            ['updated_at' => Carbon::now()->toDateString()]
+        );
         return $this->wallet_api_service->forgetDetailCache($WalletDetailEntity->wallet_id);
     }
 

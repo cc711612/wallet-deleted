@@ -33,8 +33,8 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-//        WalletUserEntity::observe(WalletUserObserver::class);
+        //observe
+        WalletUserEntity::observe(WalletUserObserver::class);
         WalletDetailEntity::observe(WalletDetailObserver::class);
         WalletEntity::observe(WalletObserver::class);
     }
