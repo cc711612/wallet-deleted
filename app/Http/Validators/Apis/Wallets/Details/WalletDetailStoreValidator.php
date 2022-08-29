@@ -69,7 +69,7 @@ class WalletDetailStoreValidator extends ValidatorAbstracts
             'wallet_details.value'                    => [
                 'required',
                 'integer',
-                'min:1',
+//                'min:1',
             ],
             'wallet_details.select_all'               => [
                 'required',
