@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
+use Illuminate\Support\Carbon;
 
 class WalletDetailUpdateRequest extends Request
 {
@@ -28,6 +29,7 @@ class WalletDetailUpdateRequest extends Request
             'wallet_details.select_all'               => 0,
             'wallet_details.value'                    => 0,
             'wallet_details.updated_by'               => null,
+            'wallet_details.updated_at'               => Carbon::now()->toDateTimeString(),
             'wallet_detail_wallet_user'               => [],
         ];
     }
