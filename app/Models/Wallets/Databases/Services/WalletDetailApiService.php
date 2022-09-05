@@ -12,6 +12,7 @@ use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 use Illuminate\Support\Facades\DB;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 use App\Traits\Caches\CacheTrait;
+use Illuminate\Support\Collection;
 
 class WalletDetailApiService extends Service
 {
@@ -102,5 +103,23 @@ class WalletDetailApiService extends Service
             ->where('wallet_id', $this->getRequestByKey('wallets.id'))
             ->where('checkout_at', $this->getRequestByKey('checkout_at'))
             ->update($this->getRequestByKey('wallet_details'));
+    }
+
+    /**
+     * @param  int  $wallet_id
+     *
+     * @return \Illuminate\Support\Collection
+     * @Author: Roy
+     * @DateTime: 2022/9/5 下午 10:28
+     */
+    public function getPublicDetailByWalletId(int $wallet_id): Collection
+    {
+        return $this->getEntity()
+            ->select([
+                'id', 'wallet_id', 'type', 'symbol_operation_type_id', 'value',
+            ])
+            ->where('wallet_id', $wallet_id)
+            ->where('type', WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE)
+            ->get();
     }
 }

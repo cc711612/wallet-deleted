@@ -27,6 +27,7 @@ use App\Http\Requesters\Apis\Wallets\Details\WalletDetailUncheckoutRequest;
 use App\Http\Validators\Apis\Wallets\Details\WalletDetailUncheckoutValidator;
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\WalletDetailResource;
+use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
 
 class WalletDetailController extends ApiController
 {
@@ -104,6 +105,20 @@ class WalletDetailController extends ApiController
             return $this->response()->errorBadRequest($Validate->errors()->first());
         }
 
+        if (Arr::get($requester, 'wallet_details.type') == WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE &&
+            Arr::get($requester,
+                'wallet_details.symbol_operation_type_id') == SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT
+        ) {
+            # 公費 & 減項 需檢查公費額度
+            $Details = $this->wallet_detail_api_service
+                ->getPublicDetailByWalletId(Arr::get($requester, 'wallets.id'));
+            $DetailGroupBySymbol = $Details->groupBy('symbol_operation_type_id');
+            $total = $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT)->sum('value') > $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT)->sum('value');
+            if ($total - Arr::get($requester, 'wallet_details.value') < 0) {
+                return $this->response()->errorBadRequest("公費結算金額不得為負數");
+            }
+        }
+
         if (Arr::get($requester, 'wallet_details.type') != WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE) {
             # 驗證users
             $ValidateWalletUsers = $this->wallet_user_api_service
@@ -140,6 +155,30 @@ class WalletDetailController extends ApiController
         if ($Validate->fails() === true) {
             return $this->response()->errorBadRequest($Validate->errors()->first());
         }
+
+        if (Arr::get($requester, 'wallet_details.type') == WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE &&
+            Arr::get($requester,
+                'wallet_details.symbol_operation_type_id') == SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT
+        ) {
+            # 公費 & 減項 需檢查公費額度
+            $Details = $this->wallet_detail_api_service
+                ->getPublicDetailByWalletId(Arr::get($requester, 'wallets.id'));
+            $before_detail_value = 0;
+            # 更新前為公帳細項
+            $UpdateDetail = $Details->keyBy('id')->get(Arr::get($requester, 'wallet_details.id'));
+            if (is_null($UpdateDetail) === false) {
+                $before_detail_value = $UpdateDetail->value;
+                if ($UpdateDetail->symbol_operation_type_id == SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT) {
+                    $before_detail_value = 0 - $UpdateDetail->value;
+                }
+            }
+            $DetailGroupBySymbol = $Details->groupBy('symbol_operation_type_id');
+            $total = $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT)->sum('value') - $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT)->sum('value');
+            if ($total + $before_detail_value - Arr::get($requester, 'wallet_details.value') < 0) {
+                return $this->response()->errorBadRequest("公費結算金額不得為負數");
+            }
+        }
+
         if (Arr::get($requester, 'wallet_details.type') != WalletDetailTypes::WALLET_DETAIL_TYPE_PUBLIC_EXPENSE) {
             # 驗證users
             $ValidateWalletUsers = $this->wallet_user_api_service
