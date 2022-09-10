@@ -38,4 +38,26 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /**
+     * @param $request
+     * @param  \Throwable  $e
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+     * @throws \Throwable
+     * @Author: Roy
+     * @DateTime: 2022/9/10 下午 02:56
+     */
+    public function render($request, Throwable $e)
+    {
+        if ($request->is('api/*')) {
+            return response()->json([
+                'code'    => 500,
+                'message' => 'Server Errors',
+                'details' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+
+        return parent::render($request, $e);
+    }
 }
