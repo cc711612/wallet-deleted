@@ -73,7 +73,7 @@ return [
         ],
         'front' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/bot/laravel.log'),
+            'path' => storage_path('logs/front/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 7,
         ],
