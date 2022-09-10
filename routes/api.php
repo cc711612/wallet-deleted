@@ -10,6 +10,8 @@ use App\Http\Controllers\Apis\Auth\RegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletRegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletLoginController;
 use App\Http\Controllers\Apis\Logs\LineController;
+use App\Http\Controllers\Apis\Logs\FrontLogController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,16 +33,24 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
     Route::group(['as' => 'wallet.', 'prefix' => '/wallet'], function () {
         Route::name("user")->post("/user", [WalletUserController::class, 'index']);
         # 登入
-        Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
+        Route::group(['as' => 'auth.', 'prefix' => '/auth'], function () {
             Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
             Route::name("login.token")->post("/login/token", [WalletLoginController::class, 'token']);
             Route::name("register")->post("/register", [WalletRegisterController::class, 'register']);
         });
     });
     # Webhook
-    Route::group(['as' => 'webhook.', 'prefix' => 'webhook'], function () {
-        Route::group(['as' => 'line.', 'prefix' => 'line'], function () {
+    Route::group(['as' => 'webhook.', 'prefix' => '/webhook'], function () {
+        Route::group(['as' => 'line.', 'prefix' => '/line'], function () {
             Route::name("store")->any("/", [LineController::class, 'store']);
+        });
+    });
+    # Log
+    Route::group(['as' => 'log.', 'prefix' => '/log'], function () {
+        # Front
+        Route::group(['as' => 'front.', 'prefix' => '/front'], function () {
+            Route::name("info")->post("/normal", [FrontLogController::class, 'normal']);
+            Route::name("critical")->post("/serious", [FrontLogController::class, 'serious']);
         });
     });
     # 需要member_token的
