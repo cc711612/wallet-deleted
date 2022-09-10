@@ -9,7 +9,7 @@ use App\Http\Controllers\Apis\Wallets\WalletUserController;
 use App\Http\Controllers\Apis\Auth\RegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletRegisterController;
 use App\Http\Controllers\Apis\Wallets\Auth\WalletLoginController;
-
+use App\Http\Controllers\Apis\Logs\LineController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,6 +35,12 @@ Route::group(['middleware' => [], 'as' => 'api.',], function () {
             Route::name("login")->post("/login", [WalletLoginController::class, 'login']);
             Route::name("login.token")->post("/login/token", [WalletLoginController::class, 'token']);
             Route::name("register")->post("/register", [WalletRegisterController::class, 'register']);
+        });
+    });
+    # Webhook
+    Route::group(['as' => 'webhook.', 'prefix' => 'webhook'], function () {
+        Route::group(['as' => 'line.', 'prefix' => 'line'], function () {
+            Route::name("store")->any("/", [LineController::class, 'store']);
         });
     });
     # 需要member_token的
