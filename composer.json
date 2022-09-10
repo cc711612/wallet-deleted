@@ -12,6 +12,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/telescope": "^4.9",
         "laravel/tinker": "^2.5",
+        "linecorp/line-bot-sdk": "^7.6",
         "predis/predis": "^2.0"
     },
     "require-dev": {

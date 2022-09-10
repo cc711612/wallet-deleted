@@ -4,9 +4,12 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use App\Traits\LineMessageTrait;
 
 class Handler extends ExceptionHandler
 {
+    use LineMessageTrait;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -51,6 +54,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         if ($request->is('api/*')) {
+            $this->sendMessage(sprintf("url : %s ,message : %s", $request->route()->uri, $e->getMessage()));
             return response()->json([
                 'status'  => false,
                 'code'    => 500,
@@ -61,4 +65,5 @@ class Handler extends ExceptionHandler
 
         return parent::render($request, $e);
     }
+
 }

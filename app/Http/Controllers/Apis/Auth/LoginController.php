@@ -57,13 +57,11 @@ class LoginController extends ApiController
     }
 
     /**
-     * @param  \Illuminate\Http\Request  $request
-     *
      * @return \Illuminate\Http\JsonResponse
      * @Author: Roy
-     * @DateTime: 2022/6/28 上午 05:44
+     * @DateTime: 2022/9/10 下午 03:51
      */
-    public function cache(Request $request)
+    public function cache()
     {
         return response()->json([
             'status'  => true,

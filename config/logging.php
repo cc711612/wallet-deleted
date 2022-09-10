@@ -65,6 +65,12 @@ return [
             'level' => 'info',
             'days' => 14,
         ],
+        'bot' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/bot/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 7,
+        ],
         'job' => [
             'driver' => 'daily',
             'path' => storage_path('logs/jobs/laravel.log'),
