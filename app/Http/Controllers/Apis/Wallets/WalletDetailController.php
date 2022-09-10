@@ -173,7 +173,7 @@ class WalletDetailController extends ApiController
                 }
             }
             $DetailGroupBySymbol = $Details->groupBy('symbol_operation_type_id');
-            $total = $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT)->sum('value') - $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT)->sum('value');
+            $total = $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,collect([]))->sum('value') - $DetailGroupBySymbol->get(SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,collect([]))->sum('value');
             if ($total + $before_detail_value - Arr::get($requester, 'wallet_details.value') < 0) {
                 return $this->response()->errorBadRequest("公費結算金額不得為負數");
             }
