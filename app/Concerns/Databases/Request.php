@@ -69,7 +69,7 @@ abstract class Request implements ArrayAccess, RequestContract
     }
 
     /**
-     * @param \Illuminate\Support\Collection $collection
+     * @param  \Illuminate\Support\Collection  $collection
      *
      * @Author  : boday
      * @DateTime: 2018-12-28 16:30
@@ -125,7 +125,7 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Dynamically retrieve attributes on the model.
      *
-     * @param string $key
+     * @param  string  $key
      *
      * @return mixed
      */
@@ -135,20 +135,19 @@ abstract class Request implements ArrayAccess, RequestContract
     }
 
     /**
-     * Dynamically set attributes on the model.
+     * @param $key
+     * @param $value
      *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return array
+     * @Author: Roy
+     * @DateTime: 2022/9/15 上午 12:16
      */
-    public function __set($key, $value): array
+    public function __set($key, $value): void
     {
-        return $this->setAttribute($key, $value);
+        $this->setAttribute($key, $value);
     }
 
     /**
-     * @param string $key
+     * @param  string  $key
      *
      * @return mixed
      * @Author  : boday
@@ -160,7 +159,7 @@ abstract class Request implements ArrayAccess, RequestContract
     }
 
     /**
-     * @param string $key
+     * @param  string  $key
      * @param        $value
      *
      * @return array
@@ -175,7 +174,7 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Determine if an attribute or relation exists on the model.
      *
-     * @param string $key
+     * @param  string  $key
      *
      * @return bool
      */
@@ -187,7 +186,7 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Determine if the given attribute exists.
      *
-     * @param mixed $offset
+     * @param  mixed  $offset
      *
      * @return bool
      */
@@ -199,7 +198,7 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Unset an attribute on the model.
      *
-     * @param string $key
+     * @param  string  $key
      *
      * @return void
      */
@@ -211,7 +210,7 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Unset the value for a given offset.
      *
-     * @param mixed $offset
+     * @param  mixed  $offset
      *
      * @return void
      */
@@ -233,7 +232,7 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Get the value for a given offset.
      *
-     * @param mixed $offset
+     * @param  mixed  $offset
      *
      * @return mixed
      */
@@ -245,8 +244,8 @@ abstract class Request implements ArrayAccess, RequestContract
     /**
      * Set the value for a given offset.
      *
-     * @param mixed $offset
-     * @param mixed $value
+     * @param  mixed  $offset
+     * @param  mixed  $value
      *
      * @return array
      */
@@ -288,6 +287,7 @@ abstract class Request implements ArrayAccess, RequestContract
             ], "utf8"));
 
     }
+
     function array_merge_default(array $sources, array $defaults): array
     {
         return array_replace($defaults, array_intersect_key(
