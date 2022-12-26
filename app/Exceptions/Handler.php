@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use App\Traits\LineMessageTrait;
+use Illuminate\Http\Request;
 
 class Handler extends ExceptionHandler
 {
@@ -49,12 +50,12 @@ class Handler extends ExceptionHandler
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
      * @throws \Throwable
      * @Author: Roy
-     * @DateTime: 2022/9/10 下午 02:56
+     * @DateTime: 2022/12/26 上午 10:27
      */
     public function render($request, Throwable $e)
     {
         if ($request->is('api/*')) {
-            $this->sendMessage(sprintf("url : %s ,message : %s", $request->route()->uri, $e->getMessage()));
+            $this->sendMessage(sprintf("url : %s ,message : %s", $request->getUri, $e->getMessage()));
             return response()->json([
                 'status'  => false,
                 'code'    => 500,
