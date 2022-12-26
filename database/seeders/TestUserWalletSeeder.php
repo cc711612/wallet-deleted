@@ -1,36 +1,30 @@
 <?php
+/**
+ * @Author: Roy
+ * @DateTime: 2022/12/26 下午 03:56
+ */
 
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Users\Databases\Entities\UserEntity;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\Wallets\Databases\Entities\WalletEntity;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
 use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 use App\Models\SymbolOperationTypes\Contracts\Constants\SymbolOperationTypes;
+use App\Models\Users\Databases\Entities\UserEntity;
+use App\Models\Wallets\Databases\Entities\WalletEntity;
 use App\Models\Wallets\Databases\Entities\WalletDetailEntity;
 
-class InitializationUserWalletSeeder extends Seeder
+class TestUserWalletSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $insert_data = [
             [
-                'name'    => '冠融',
-                'account' => 'cc711612',
-            ],
-            [
-                'name'    => '友菘',
-                'account' => 'seanttc',
+                'name'    => 'testing_wallet_user',
+                'account' => config('testing.user.account'),
             ],
         ];
 
@@ -41,10 +35,10 @@ class InitializationUserWalletSeeder extends Seeder
         WalletDetailEntity::truncate();
         # create
         foreach ($insert_data as $data) {
-            $token = Str::random(10);
+            $token = config('testing.user.token');
             $UserEntity = UserEntity::create(
                 array_merge($data, [
-                    'password'    => '123456789',
+                    'password'    => config('testing.user.password'),
                     'token'       => $token,
                     'verified_at' => Carbon::now()->toDateTimeString(),
                 ])
@@ -69,8 +63,8 @@ class InitializationUserWalletSeeder extends Seeder
                 'symbol_operation_type_id' => SymbolOperationTypes::SYMBOL_OPERATION_TYPE_INCREMENT,
                 'value'                    => 8000,
                 'created_by'               => $WalletUserEntity->id,
+                'select_all'               => 1,
                 'updated_by'               => $WalletUserEntity->id,
-
             ]);
             # 餐費
             $WalletDetailEntity = $WalletEntity->wallet_details()->create([
@@ -78,6 +72,7 @@ class InitializationUserWalletSeeder extends Seeder
                 'title'                    => '餐費',
                 'symbol_operation_type_id' => SymbolOperationTypes::SYMBOL_OPERATION_TYPE_DECREMENT,
                 'value'                    => 1000,
+                'select_all'               => 1,
                 'created_by'               => $WalletUserEntity->id,
                 'updated_by'               => $WalletUserEntity->id,
             ]);
@@ -89,6 +84,5 @@ class InitializationUserWalletSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         echo self::class.' Complete'.PHP_EOL.PHP_EOL;
-
     }
 }
