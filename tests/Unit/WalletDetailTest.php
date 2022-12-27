@@ -15,6 +15,8 @@ class WalletDetailTest extends TestCase
     use WalletTrait, AuthTrait, ResponseTrait;
 
     private $member_data;
+    private $wallet_id = 1;
+    private $wallet_detail_id = 1;
 
     protected function setUp(): void
     {
@@ -23,65 +25,57 @@ class WalletDetailTest extends TestCase
         $this->member_password = config('testing.user.password');
     }
 
-    public function test_get_wallet_detail()
+    public function test_get_wallet_detail_fail()
     {
-        $this->member_token = $this->getMemberToken();
-        $response = $this->getWalletDetail($this->getMemberDataByKey('wallet.id'));
+        $response = $this->getWalletDetail($this->wallet_id);
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', true)
-                ->where('code', HttpResponse::HTTP_OK)
-                ->has('data.wallet')
-                ->has('data.wallet.details')
+                ->where('status', false)
+                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
+                ->has('message')
                 ->etc();
         });
         $response->assertOk();
     }
 
-    public function test_store_wallet_detail()
+    public function test_store_wallet_detail_fail()
     {
-        $this->member_token = $this->getMemberToken();
-        $response = $this->storeWalletDetail($this->getMemberDataByKey('wallet.id'));
+        $response = $this->storeWalletDetail($this->wallet_id);
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', true)
-                ->where('code', HttpResponse::HTTP_OK)
-                ->has('data')
+                ->where('status', false)
+                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
+                ->has('message')
                 ->etc();
         });
         $response->assertOk();
     }
 
-    public function test_update_wallet_detail()
+    public function test_update_wallet_detail_fail()
     {
-        $this->member_token = $this->getMemberToken();
-        $WalletDetail = $this->getWalletDetail($this->getMemberDataByKey('wallet.id'));
-        $WalletDetail->assertOk();
-        $wallet_id = Arr::get($this->getContentToArray($WalletDetail), 'data.wallet.id');
-        $detail_id = Arr::get($this->getContentToArray($WalletDetail), 'data.wallet.details.0.id');
+        $wallet_id = $this->wallet_id;
+        $detail_id = $this->wallet_detail_id;
         $response = $this->updateWalletDetail($wallet_id, $detail_id);
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', true)
-                ->where('code', HttpResponse::HTTP_OK)
-                ->has('data')
+                ->where('status', false)
+                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
+                ->has('message')
                 ->etc();
         });
         $response->assertOk();
     }
 
-    public function test_delete_wallet_detail()
+    public function test_delete_wallet_detail_fail()
     {
-        $this->member_token = $this->getMemberToken();
-        $WalletDetail = $this->getWalletDetail($this->getMemberDataByKey('wallet.id'));
-        $WalletDetail->assertOk();
-        $wallet_id = Arr::get($this->getContentToArray($WalletDetail), 'data.wallet.id');
-        $detail_id = Arr::get($this->getContentToArray($WalletDetail), 'data.wallet.details.0.id');
+        $wallet_id = $this->wallet_id;
+        $detail_id = $this->wallet_detail_id;
         $response = $this->deleteWalletDetail($wallet_id, $detail_id);
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', true)
-                ->where('code', HttpResponse::HTTP_OK)
+                ->where('status', false)
+                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
+                ->has('message')
                 ->etc();
         });
         $response->assertOk();

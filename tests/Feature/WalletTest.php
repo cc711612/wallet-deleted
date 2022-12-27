@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use Database\Seeders\TestUserWalletSeeder;
@@ -10,7 +10,6 @@ use Illuminate\Support\Arr;
 use Tests\Traits\WalletTrait;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Http\Response as HttpResponse;
-use Illuminate\Support\Str;
 
 class WalletTest extends TestCase
 {
@@ -25,27 +24,31 @@ class WalletTest extends TestCase
         $this->member_password = config('testing.user.password');
     }
 
-    public function test_get_wallet_list_fail()
+    public function test_get_wallet_list()
     {
+        $this->seed(TestUserWalletSeeder::class);
+        $this->member_token = $this->getMemberToken();
         $response = $this->getWalletList();
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', false)
-                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
-                ->has('message')
+                ->where('status', true)
+                ->where('code', HttpResponse::HTTP_OK)
+                ->has('data.paginate')
+                ->has('data.wallets')
                 ->etc();
         });
         $response->assertOk();
     }
 
-    public function test_get_wallet_user_fail()
+    public function test_get_wallet_user()
     {
-        $response = $this->getWalletUser(Str::random(10));
+        $this->member_token = $this->getMemberToken();
+        $response = $this->getWalletUser($this->getMemberDataByKey('wallet.code'));
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', false)
-                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
-                ->has('message')
+                ->where('status', true)
+                ->where('code', HttpResponse::HTTP_OK)
+                ->has('data.wallet.users')
                 ->etc();
         });
         $response->assertOk();
@@ -53,12 +56,13 @@ class WalletTest extends TestCase
 
     public function test_store_wallet()
     {
+        $this->member_token = $this->getMemberToken();
         $response = $this->storeWallet();
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', false)
-                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
-                ->has('message')
+                ->where('status', true)
+                ->where('code', HttpResponse::HTTP_OK)
+                ->has('data.wallet.id')
                 ->etc();
         });
         $response->assertOk();
@@ -66,15 +70,15 @@ class WalletTest extends TestCase
 
     public function test_update_wallet()
     {
+        $this->member_token = $this->getMemberToken();
         $ResponseList = $this->getWalletList();
         $ResponseList->assertOk();
-        $wallet_id = 1;
+        $wallet_id = Arr::get($this->getContentToArray($ResponseList), 'data.wallets.0.id');
         $response = $this->updateWallet($wallet_id);
         $response->assertJson(function (AssertableJson $json) {
             $json
-                ->where('status', false)
-                ->where('code', HttpResponse::HTTP_BAD_REQUEST)
-                ->has('message')
+                ->where('status', true)
+                ->where('code', HttpResponse::HTTP_OK)
                 ->etc();
         });
         $response->assertOk();
