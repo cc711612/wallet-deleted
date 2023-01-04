@@ -18,6 +18,7 @@ use App\Models\Wallets\Contracts\Constants\WalletDetailTypes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Arr;
 use App\Traits\Caches\CacheTrait;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class WalletApiService extends Service
 {
@@ -43,7 +44,7 @@ class WalletApiService extends Service
      * @Author: Roy
      * @DateTime: 2022/6/21 上午 12:30
      */
-    public function paginate()
+    public function paginate(): LengthAwarePaginator
     {
         $page_count = $this->getPageCount();
 

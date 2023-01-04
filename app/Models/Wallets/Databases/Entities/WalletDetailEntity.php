@@ -31,6 +31,7 @@ class WalletDetailEntity extends Model
         'title',
         'symbol_operation_type_id',
         'value',
+        'note',
         'select_all',
         'checkout_by',
         'created_by',
