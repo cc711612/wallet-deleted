@@ -93,6 +93,7 @@ class WalletDetailResource extends JsonResource
                     'symbol_operation_type_id' => Arr::get($Detail, 'symbol_operation_type_id'),
                     'select_all'               => Arr::get($Detail, 'select_all'),
                     'value'                    => Arr::get($Detail, 'value'),
+                    'note'                     => Arr::get($Detail, 'note'),
                     'created_by'               => Arr::get($Detail, 'created_by'),
                     'checkout_by'              => Arr::get($Detail, 'checkout_by'),
                     'updated_by'               => Arr::get($Detail, 'updated_by'),
