@@ -31,7 +31,11 @@ class WalletDetailResource extends JsonResource
         $Wallet = $this->resource;
         $WalletDetails = $Wallet->wallet_details;
         $WalletUsers = $Wallet->wallet_users->pluck('id');
-        $WalletDetailGroupBySymbolType = $WalletDetails->groupBy('symbol_operation_type_id');
+
+        $WalletDetailGroupBySymbolType = $WalletDetails
+            ->where('select_all',0)
+            ->groupBy('symbol_operation_type_id');
+
         return [
             'wallet' => [
                 'id'      => Arr::get($Wallet, 'id'),
