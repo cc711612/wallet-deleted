@@ -1,0 +1,47 @@
+stages:
+  - test
+  - deploy
+  - cache
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  tags:
+    - "runner_tag"
+  # 限制只有 master branch 會執行此 job
+  only:
+    - master
+  script:
+    - cd /var/www/wallet
+    #- rm -rf .env
+    #- ln -s .env.testing .env
+    - php artisan test
+cache-job:   # This job runs in the test stage.
+  stage: cache    # It only starts when the job in the build stage completes successfully.
+  tags:
+    - "runner_tag"
+  # 限制只有 master branch 會執行此 job
+  only:
+    - master
+  script:
+    - cd /var/www/wallet
+    - php artisan cache:clear
+    - php artisan optimize
+    - php artisan view:cache
+# 首先宣告 job 的名稱
+deploy-job:
+  # 宣告此 job 屬於哪一個 stage
+  stage: deploy
+  # gitlab runner 的 tags
+  tags:
+    - "runner_tag"
+  # 限制只有 master branch 會執行此 job
+  only:
+    - master
+  # 最後是此 job 要執行哪些動作
+  script:
+    - cd /var/www/wallet
+    - git checkout master
+    - git pull origin master
+    - composer install
+    #- rm -rf .env
+    #- ln -s .env.production .env
+
